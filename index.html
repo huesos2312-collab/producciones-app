@@ -2009,6 +2009,8 @@ function memberCardHTML(member) {
     <div style="flex:1; min-width:0;">
       <div class="team-name">${member.name}</div>
       <div class="team-role">${member.role}</div>
+      ${member.email ? `<div style="font-size:11px; color:var(--text2); margin-top:3px;">✉ ${member.email}</div>` : ''}
+      ${member.phone ? `<div style="font-size:11px; color:var(--text2); margin-top:1px;">📞 (598)-${member.phone.replace(/^0/,'')}</div>` : ''}
       <div class="team-shows" id="mshows-${member.id}">${n} show${n!==1?'s':''} &nbsp;·&nbsp; <span style="color:${si.color};">●</span> ${si.label}</div>
     </div>
     <div style="display:flex; flex-direction:column; align-items:flex-end; justify-content:space-between; gap:12px;">
