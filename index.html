@@ -508,6 +508,107 @@
     font-family: inherit; text-align: left; transition: color 0.15s;
   }
   .add-task-btn:hover { color: var(--text); }
+
+  /* ── Show tasks ── */
+  .show-task-card {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    margin-bottom: 10px;
+    overflow: hidden;
+  }
+  .show-task-main {
+    display: flex; align-items: flex-start; gap: 10px;
+    padding: 12px 14px;
+  }
+  .show-task-status {
+    flex-shrink: 0;
+    font-size: 10px; font-weight: 700; letter-spacing: 0.5px;
+    padding: 3px 8px; border-radius: 20px;
+    cursor: pointer; user-select: none;
+    white-space: nowrap; margin-top: 1px;
+    transition: background 0.15s, color 0.15s;
+  }
+  .show-task-status.nueva      { background: rgba(245,197,66,0.18); color: var(--yellow); border: 1px solid rgba(245,197,66,0.3); }
+  .show-task-status.en_proceso { background: rgba(74,158,255,0.18); color: var(--blue);   border: 1px solid rgba(74,158,255,0.3); }
+  .show-task-status.finalizada { background: rgba(46,194,126,0.18); color: var(--green);  border: 1px solid rgba(46,194,126,0.3); }
+  .show-task-text {
+    flex: 1; outline: none; font-size: 13px; line-height: 1.4;
+    word-break: break-word; min-height: 18px; color: var(--text);
+    background: none; border: none; padding: 0; font-family: inherit;
+    resize: none; height: auto;
+  }
+  .show-task-text:focus { color: var(--text); }
+  .show-task-avatar {
+    flex-shrink: 0; width: 26px; height: 26px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 700; cursor: pointer;
+    opacity: 1; transition: opacity 0.15s;
+  }
+  .show-task-avatar.unassigned {
+    background: var(--surface); border: 1.5px dashed var(--border);
+    color: var(--text2); font-size: 14px;
+  }
+  .show-task-del {
+    flex-shrink: 0; background: none; border: none;
+    color: var(--text2); font-size: 16px; cursor: pointer;
+    padding: 0 2px; opacity: 0; transition: opacity 0.15s;
+    line-height: 1;
+  }
+  .show-task-card:hover .show-task-del { opacity: 1; }
+  .show-task-del:hover { color: var(--accent); }
+  .show-task-notes-toggle {
+    width: 100%; background: none; border: none; border-top: 1px dashed var(--border);
+    color: var(--text2); font-size: 11px; padding: 6px 14px;
+    text-align: left; cursor: pointer; font-family: inherit;
+    transition: color 0.15s;
+  }
+  .show-task-notes-toggle:hover { color: var(--text); }
+  .show-task-notes-area {
+    display: none; padding: 8px 14px 10px;
+    border-top: 1px solid var(--border);
+  }
+  .show-task-notes-area.open { display: block; }
+  .show-task-notes-input {
+    width: 100%; background: var(--surface); border: 1px solid var(--border);
+    border-radius: 8px; padding: 8px 10px; font-size: 12px;
+    color: var(--text); font-family: inherit; resize: none;
+    outline: none; min-height: 60px; line-height: 1.5;
+    box-sizing: border-box;
+  }
+  .show-task-notes-input::placeholder { color: var(--text2); }
+  .show-task-person-picker {
+    display: none; padding: 8px 14px 10px; border-top: 1px solid var(--border);
+    gap: 8px; flex-wrap: wrap;
+  }
+  .show-task-person-picker.open { display: flex; }
+  .stp-btn {
+    width: 30px; height: 30px; border-radius: 50%; border: 2px solid transparent;
+    font-size: 12px; font-weight: 700; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: transform 0.1s, border-color 0.15s;
+  }
+  .stp-btn.selected { border-color: white; transform: scale(1.1); }
+  .stp-none-btn {
+    width: 30px; height: 30px; border-radius: 50%;
+    background: var(--surface); border: 1.5px dashed var(--border);
+    color: var(--text2); font-size: 16px; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .show-tasks-add-btn {
+    width: 100%; background: none; border: 1px dashed var(--border);
+    border-radius: var(--radius); padding: 11px 14px;
+    color: var(--text2); font-size: 13px; cursor: pointer;
+    font-family: inherit; text-align: left; transition: color 0.15s, border-color 0.15s;
+    margin-top: 4px;
+  }
+  .show-tasks-add-btn:hover { color: var(--text); border-color: var(--text2); }
+  .is-lector .show-task-del,
+  .is-lector .show-tasks-add-btn,
+  .is-lector .show-task-status { pointer-events: none; }
+  .is-lector .show-task-avatar { pointer-events: none; }
+  .is-lector .show-task-text   { pointer-events: none; }
+  .is-lector .show-task-notes-input { pointer-events: none; }
   .task-input-row {
     display: flex; align-items: center; gap: 8px;
     padding: 8px 14px; border-top: 1px solid var(--border);
@@ -1117,218 +1218,8 @@
     <div class="detail-panel" id="detail-panel">
       <button class="back-btn" onclick="closeDetail()">← Volver</button>
 
-      <!-- Sin fecha 1: Cuarteto de Nos -->
-      <div id="detail-sinfecha1" style="display:none">
-        <div style="margin-bottom:16px;">
-          <div style="font-size:20px; font-weight:700; margin-bottom:4px;">Cuarteto de Nos</div>
-          <div style="font-size:13px; color:var(--text2);">📍 Antel Arena, Montevideo · <span class="tag tag-yellow" style="display:inline;">Negociación</span></div>
-        </div>
-        <div style="font-size:11px; font-weight:700; color:var(--text2); text-transform:uppercase; letter-spacing:0.8px; margin-bottom:12px;">Estatus del proyecto</div>
-
-        <div class="estatus-section">
-          <div class="estatus-header pendiente"><span>⏳ Pendiente</span><span class="cnt" id="cnt-sf1-p">3</span></div>
-          <div class="estatus-body" id="body-sf1-p" data-show="sf1" data-section="p">
-            <div class="task-item"><div class="task-check" onclick="toggleTask(this)"></div><span class="task-text" contenteditable="true">Confirmar disponibilidad de fechas con management</span><button class="task-del" onclick="deleteTask(this)">×</button></div>
-            <div class="task-item"><div class="task-check" onclick="toggleTask(this)"></div><span class="task-text" contenteditable="true">Solicitar rider técnico actualizado</span><button class="task-del" onclick="deleteTask(this)">×</button></div>
-            <div class="task-item"><div class="task-check" onclick="toggleTask(this)"></div><span class="task-text" contenteditable="true">Cotización de seguros del evento</span><button class="task-del" onclick="deleteTask(this)">×</button></div>
-            <button class="add-task-btn" onclick="showAddInput(this, 'cnt-sf1-p')">＋ Agregar tarea</button>
-          </div>
-        </div>
-
-        <div class="estatus-section">
-          <div class="estatus-header en-proceso"><span>🔄 En proceso</span><span class="cnt" id="cnt-sf1-e">1</span></div>
-          <div class="estatus-body" id="body-sf1-e" data-show="sf1" data-section="e">
-            <div class="task-item"><div class="task-check progress" onclick="toggleTask(this)">→</div><span class="task-text" contenteditable="true">Negociación de cachet con representante</span><button class="task-del" onclick="deleteTask(this)">×</button></div>
-            <button class="add-task-btn" onclick="showAddInput(this, 'cnt-sf1-e')">＋ Agregar tarea</button>
-          </div>
-        </div>
-
-        <div class="estatus-section">
-          <div class="estatus-header completada"><span>✓ Completada</span><span class="cnt" id="cnt-sf1-c">2</span></div>
-          <div class="estatus-body" id="body-sf1-c" data-show="sf1" data-section="c">
-            <div class="task-item"><div class="task-check done" onclick="toggleTask(this)">✓</div><span class="task-text" contenteditable="true" data-done="true">Contacto inicial con management</span><button class="task-del" onclick="deleteTask(this)">×</button></div>
-            <div class="task-item"><div class="task-check done" onclick="toggleTask(this)">✓</div><span class="task-text" contenteditable="true" data-done="true">Reserva tentativa del venue</span><button class="task-del" onclick="deleteTask(this)">×</button></div>
-            <button class="add-task-btn" onclick="showAddInput(this, 'cnt-sf1-c')">＋ Agregar tarea</button>
-          </div>
-        </div>
-      </div>
-
-      <!-- Sin fecha 2: Artista por confirmar -->
-      <div id="detail-sinfecha2" style="display:none">
-        <div style="margin-bottom:16px;">
-          <div style="font-size:20px; font-weight:700; margin-bottom:4px;">Artista por confirmar</div>
-          <div style="font-size:13px; color:var(--text2);">📍 Venue a definir · <span class="tag tag-red" style="display:inline;">Tentativo</span></div>
-        </div>
-        <div style="font-size:11px; font-weight:700; color:var(--text2); text-transform:uppercase; letter-spacing:0.8px; margin-bottom:12px;">Estatus del proyecto</div>
-
-        <div class="estatus-section">
-          <div class="estatus-header pendiente"><span>⏳ Pendiente</span><span class="cnt" id="cnt-sf2-p">2</span></div>
-          <div class="estatus-body" id="body-sf2-p" data-show="sf2" data-section="p">
-            <div class="task-item"><div class="task-check" onclick="toggleTask(this)"></div><span class="task-text" contenteditable="true">Definir artista candidato</span><button class="task-del" onclick="deleteTask(this)">×</button></div>
-            <div class="task-item"><div class="task-check" onclick="toggleTask(this)"></div><span class="task-text" contenteditable="true">Evaluar venues disponibles</span><button class="task-del" onclick="deleteTask(this)">×</button></div>
-            <button class="add-task-btn" onclick="showAddInput(this, 'cnt-sf2-p')">＋ Agregar tarea</button>
-          </div>
-        </div>
-
-        <div class="estatus-section">
-          <div class="estatus-header en-proceso"><span>🔄 En proceso</span><span class="cnt" id="cnt-sf2-e">0</span></div>
-          <div class="estatus-body" id="body-sf2-e" data-show="sf2" data-section="e">
-            <button class="add-task-btn" onclick="showAddInput(this, 'cnt-sf2-e')" style="border-top:none;">＋ Agregar tarea</button>
-          </div>
-        </div>
-
-        <div class="estatus-section">
-          <div class="estatus-header completada"><span>✓ Completada</span><span class="cnt" id="cnt-sf2-c">0</span></div>
-          <div class="estatus-body" id="body-sf2-c" data-show="sf2" data-section="c">
-            <button class="add-task-btn" onclick="showAddInput(this, 'cnt-sf2-c')" style="border-top:none;">＋ Agregar tarea</button>
-          </div>
-        </div>
-      </div>
-
-      <!-- Show 1 detail -->
-      <div id="detail-show1">
-        <div class="detail-banner" style="background: linear-gradient(135deg, #e8403a, #ff6b35);">
-          <div class="detail-banner-overlay"></div>
-          <div class="detail-banner-text">
-            <div class="detail-title">No Te Va Gustar</div>
-            <div class="detail-venue">Estadio Centenario · Sáb 14 Jun 2026</div>
-          </div>
-        </div>
-
-        <div class="info-row">
-          <div class="info-box">
-            <div class="info-box-label">Hora</div>
-            <div class="info-box-val">21:00</div>
-          </div>
-          <div class="info-box">
-            <div class="info-box-label">Apertura</div>
-            <div class="info-box-val">19:30</div>
-          </div>
-          <div class="info-box">
-            <div class="info-box-label">Capacidad</div>
-            <div class="info-box-val">8.000</div>
-          </div>
-        </div>
-
-        <div class="info-row">
-          <div class="info-box">
-            <div class="info-box-label">Estado</div>
-            <div class="info-box-val" style="color: var(--green);">✓ Confirmado</div>
-          </div>
-          <div class="info-box">
-            <div class="info-box-label">Montaje desde</div>
-            <div class="info-box-val">10 Jun</div>
-          </div>
-        </div>
-
-        <hr class="section-divider">
-        <div class="section-label">Equipo asignado</div>
-
-        <div class="role-row">
-          <div class="avatar" style="background:#e8403a">M</div>
-          <div class="role-label">Director de Producción</div>
-          <div class="role-person">Martín T.</div>
-        </div>
-        <div class="role-row">
-          <div class="avatar" style="background:#4a9eff">R</div>
-          <div class="role-label">Jefe Técnico / FOH</div>
-          <div class="role-person">Rodrigo P.</div>
-        </div>
-        <div class="role-row">
-          <div class="avatar" style="background:#a855f7">L</div>
-          <div class="role-label">Coordinación</div>
-          <div class="role-person">Laura M.</div>
-        </div>
-        <div class="role-row">
-          <div class="avatar" style="background:#2ec27e">S</div>
-          <div class="role-label">Técnico de Escenario</div>
-          <div class="role-person">Santiago V.</div>
-        </div>
-        <div class="role-row">
-          <div class="avatar" style="background:#f5c542; color:#111">P</div>
-          <div class="role-label">Logística / Riders</div>
-          <div class="role-person">Paula A.</div>
-        </div>
-        <div class="role-row">
-          <div class="avatar" style="background:#ff6b35">F</div>
-          <div class="role-label">Iluminación y Video</div>
-          <div class="role-person">Federico G.</div>
-        </div>
-
-        <hr class="section-divider">
-        <div class="section-label">Proveedores</div>
-
-        <div class="role-row">
-          <span>🔊</span>
-          <div class="role-label">Sonido</div>
-          <div class="role-person">ProAudio Uruguay</div>
-        </div>
-        <div class="role-row">
-          <span>💡</span>
-          <div class="role-label">Iluminación</div>
-          <div class="role-person">Lux Producciones</div>
-        </div>
-        <div class="role-row">
-          <span>🏗</span>
-          <div class="role-label">Estructura</div>
-          <div class="role-person">Steel & Stage</div>
-        </div>
-        <div class="role-row">
-          <span>🚌</span>
-          <div class="role-label">Transporte</div>
-          <div class="role-person">LogiShow</div>
-        </div>
-      </div>
-
-      <!-- Show 2 detail -->
-      <div id="detail-show2" style="display:none">
-        <div class="detail-banner" style="background: linear-gradient(135deg, #a855f7, #4a9eff);">
-          <div class="detail-banner-overlay"></div>
-          <div class="detail-banner-text">
-            <div class="detail-title">Bajofondo</div>
-            <div class="detail-venue">Teatro Solís · Dom 21 Jun 2026</div>
-          </div>
-        </div>
-        <div class="info-row">
-          <div class="info-box"><div class="info-box-label">Hora</div><div class="info-box-val">20:00</div></div>
-          <div class="info-box"><div class="info-box-label">Apertura</div><div class="info-box-val">19:00</div></div>
-          <div class="info-box"><div class="info-box-label">Capacidad</div><div class="info-box-val">1.200</div></div>
-        </div>
-        <div class="info-row">
-          <div class="info-box"><div class="info-box-label">Estado</div><div class="info-box-val" style="color: var(--green);">✓ Confirmado</div></div>
-          <div class="info-box"><div class="info-box-label">Montaje desde</div><div class="info-box-val">19 Jun</div></div>
-        </div>
-        <hr class="section-divider">
-        <div class="section-label">Equipo asignado</div>
-        <div class="role-row"><div class="avatar" style="background:#a855f7">L</div><div class="role-label">Coordinación</div><div class="role-person">Laura M.</div></div>
-        <div class="role-row"><div class="avatar" style="background:#f5c542;color:#111">P</div><div class="role-label">Logística / Riders</div><div class="role-person">Paula A.</div></div>
-        <div class="role-row"><div class="avatar" style="background:#ff6b35">F</div><div class="role-label">Iluminación y Video</div><div class="role-person">Federico G.</div></div>
-      </div>
-
-      <!-- Show 3 detail -->
-      <div id="detail-show3" style="display:none">
-        <div class="detail-banner" style="background: linear-gradient(135deg, #2ec27e, #4a9eff);">
-          <div class="detail-banner-overlay"></div>
-          <div class="detail-banner-text">
-            <div class="detail-title">Jorge Drexler</div>
-            <div class="detail-venue">Auditorio SODRE · Dom 5 Jul 2026</div>
-          </div>
-        </div>
-        <div class="info-row">
-          <div class="info-box"><div class="info-box-label">Hora</div><div class="info-box-val">20:30</div></div>
-          <div class="info-box"><div class="info-box-label">Apertura</div><div class="info-box-val">19:30</div></div>
-          <div class="info-box"><div class="info-box-label">Capacidad</div><div class="info-box-val">2.000</div></div>
-        </div>
-        <div class="info-row">
-          <div class="info-box"><div class="info-box-label">Estado</div><div class="info-box-val" style="color: var(--yellow);">⏳ En producción</div></div>
-          <div class="info-box"><div class="info-box-label">Montaje desde</div><div class="info-box-val">3 Jul</div></div>
-        </div>
-        <hr class="section-divider">
-        <div class="section-label">Equipo asignado</div>
-        <div class="role-row"><div class="avatar" style="background:#e8403a">M</div><div class="role-label">Director de Producción</div><div class="role-person">Martín T.</div></div>
-        <div class="role-row"><div class="avatar" style="background:#4a9eff">R</div><div class="role-label">Jefe Técnico / FOH</div><div class="role-person">Rodrigo P.</div></div>
-        <div class="role-row"><div class="avatar" style="background:#ff6b35">F</div><div class="role-label">Iluminación y Video</div><div class="role-person">Federico G.</div></div>
-      </div>
+      <!-- Dynamic show detail rendered by renderShowDetail(id) -->
+      <div id="detail-dynamic" style="padding-bottom:60px;"></div>
     </div>
 
     <!-- EDIT PANEL -->
@@ -1577,17 +1468,227 @@ function navigate(screen, btn) {
   closeDetail();
 }
 
+// ── Show detail (dynamic) ─────────────────────────────────
+let _detailShowId = null;
+
 function openDetail(id) {
+  _detailShowId = id;
+  renderShowDetail(id);
   const panel = document.getElementById('detail-panel');
-  document.querySelectorAll('#detail-panel > div[id^="detail-"]').forEach(d => d.style.display = 'none');
-  const target = document.getElementById('detail-' + id);
-  if (target) target.style.display = 'block';
   panel.classList.add('open');
   panel.scrollTop = 0;
 }
 
 function closeDetail() {
   document.getElementById('detail-panel').classList.remove('open');
+  _detailShowId = null;
+}
+
+function renderShowDetail(id) {
+  const data = showsData[id];
+  const el = document.getElementById('detail-dynamic');
+  if (!data || !el) return;
+  const tasks = data.tasks || [];
+  const isSF  = !data.date;
+  const color  = data.bannerColor || '#2e2e3e';
+
+  // Header
+  let headerHTML = '';
+  if (isSF) {
+    const tagClass = data.tagClass || 'tag-yellow';
+    headerHTML = `
+      <div style="padding:18px 18px 0; margin-bottom:16px;">
+        <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:8px;">
+          <div>
+            <div style="font-size:20px; font-weight:700; margin-bottom:6px;">${data.name || 'Sin nombre'}</div>
+            <div style="font-size:13px; color:var(--text2);">📍 ${data.venue || '—'}</div>
+          </div>
+          <span class="tag ${tagClass}" style="display:inline-block; flex-shrink:0; margin-top:4px;">${data.tag || ''}</span>
+        </div>
+        <button class="edit-card-btn" onclick="openEditPanel('${id}')" style="margin-top:14px; width:100%; padding:9px; background:var(--surface2); border:1px solid var(--border); border-radius:8px; color:var(--text); font-size:13px; cursor:pointer; font-family:inherit;">✏️ Editar show</button>
+      </div>`;
+  } else {
+    const dateLabel = formatFullDate(data.date);
+    headerHTML = `
+      <div class="detail-banner" style="background: linear-gradient(135deg, ${color}, ${darken(color)});">
+        <div class="detail-banner-overlay"></div>
+        <div class="detail-banner-text">
+          <div class="detail-title">${data.name || 'Sin nombre'}</div>
+          <div class="detail-venue">${data.venue || '—'}${dateLabel ? ' · ' + dateLabel : ''}</div>
+        </div>
+      </div>
+      <div style="padding:0 18px;">
+        ${data.time ? `<div class="info-row"><div class="info-box"><div class="info-box-label">Hora</div><div class="info-box-val">${data.time}</div></div><div class="info-box"><div class="info-box-label">Estado</div><div class="info-box-val" style="color:var(--green);">✓ Confirmado</div></div></div>` : ''}
+        <button class="edit-card-btn" onclick="openEditPanel('${id}')" style="margin-top:10px; width:100%; padding:9px; background:var(--surface2); border:1px solid var(--border); border-radius:8px; color:var(--text); font-size:13px; cursor:pointer; font-family:inherit;">✏️ Editar show</button>
+      </div>`;
+  }
+
+  // Tasks section
+  const statusMeta = {
+    nueva:      { label: 'Nueva',      cls: 'nueva' },
+    en_proceso: { label: 'En proceso', cls: 'en_proceso' },
+    finalizada: { label: 'Finalizada', cls: 'finalizada' },
+  };
+
+  let tasksHTML = tasks.map(t => {
+    const sm = statusMeta[t.status] || statusMeta.nueva;
+    const person = t.assignedTo ? TEAM[t.assignedTo] : null;
+    const avatarHTML = person
+      ? `<div class="show-task-avatar" style="background:${person.color}; color:${person.color === '#f5c542' ? '#111' : '#fff'};" onclick="openTaskPersonPicker('${id}','${t.id}')">${t.assignedTo}</div>`
+      : `<div class="show-task-avatar unassigned" onclick="openTaskPersonPicker('${id}','${t.id}')">＋</div>`;
+    const hasNotes = t.notes && t.notes.trim().length > 0;
+    const notesLabel = hasNotes ? `📝 ${t.notes.length > 30 ? t.notes.slice(0,30) + '…' : t.notes}` : '＋ Agregar nota';
+    return `
+      <div class="show-task-card" id="stcard-${t.id}">
+        <div class="show-task-main">
+          <span class="show-task-status ${sm.cls}" onclick="cycleShowTaskStatus('${id}','${t.id}')">${sm.label}</span>
+          <textarea class="show-task-text" rows="1"
+            oninput="autoResizeTA(this); saveShowTaskText('${id}','${t.id}',this.value)"
+            onblur="saveShowTaskText('${id}','${t.id}',this.value)"
+          >${escHtml(t.text || '')}</textarea>
+          ${avatarHTML}
+          <button class="show-task-del" onclick="deleteShowTask('${id}','${t.id}')">×</button>
+        </div>
+        <button class="show-task-notes-toggle" onclick="toggleShowTaskNotes('${t.id}')">${notesLabel}</button>
+        <div class="show-task-notes-area" id="stnotes-${t.id}">
+          <textarea class="show-task-notes-input" rows="3" placeholder="Agregar notas…"
+            oninput="saveShowTaskNotes('${id}','${t.id}',this.value)"
+          >${escHtml(t.notes || '')}</textarea>
+        </div>
+        <div class="show-task-person-picker" id="stpicker-${t.id}">
+          <div class="stp-none-btn" onclick="assignShowTaskPerson('${id}','${t.id}',null)" title="Sin asignar">×</div>
+          ${Object.entries(TEAM).map(([k,v]) => `<button class="stp-btn${t.assignedTo===k?' selected':''}" style="background:${v.color}; color:${v.color==='#f5c542'?'#111':'#fff'};" onclick="assignShowTaskPerson('${id}','${t.id}','${k}')" title="${v.name}">${k}</button>`).join('')}
+        </div>
+      </div>`;
+  }).join('');
+
+  el.innerHTML = `
+    ${headerHTML}
+    <div style="padding:0 18px;">
+      <hr class="section-divider">
+      <div class="section-label" style="margin-bottom:10px;">Tareas del show</div>
+      <div id="show-tasks-list">${tasksHTML}</div>
+      <button class="show-tasks-add-btn" onclick="addShowTask('${id}')">＋ Agregar tarea</button>
+    </div>`;
+
+  // Auto-resize all textareas
+  el.querySelectorAll('.show-task-text').forEach(ta => autoResizeTA(ta));
+}
+
+function formatFullDate(dateStr) {
+  if (!dateStr) return '';
+  const d = new Date(dateStr + 'T12:00:00');
+  const days   = ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
+  const months = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+  return `${days[d.getDay()]} ${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()}`;
+}
+
+function darken(hex) {
+  // Slightly adjust the second gradient stop (just offset hue via filter trick)
+  // For simple approach, return a darker shade
+  if (hex.startsWith('var(')) return hex;
+  try {
+    const n = parseInt(hex.slice(1), 16);
+    const r = Math.max(0, ((n>>16)&255) - 40);
+    const g = Math.max(0, ((n>>8) &255) - 40);
+    const b = Math.max(0, ( n      &255) - 40);
+    return `#${r.toString(16).padStart(2,'0')}${g.toString(16).padStart(2,'0')}${b.toString(16).padStart(2,'0')}`;
+  } catch(e) { return hex; }
+}
+
+function escHtml(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function autoResizeTA(ta) {
+  ta.style.height = 'auto';
+  ta.style.height = ta.scrollHeight + 'px';
+}
+
+// ── Show task CRUD ───────────────────────────────────────
+function addShowTask(showId) {
+  if (!showsData[showId]) return;
+  if (!showsData[showId].tasks) showsData[showId].tasks = [];
+  const taskId = 'st-' + Date.now();
+  showsData[showId].tasks.push({ id: taskId, text: '', assignedTo: null, status: 'nueva', notes: '' });
+  renderShowDetail(showId);
+  saveState();
+  // Focus the new task text
+  setTimeout(() => {
+    const newCard = document.getElementById('stcard-' + taskId);
+    if (newCard) { const ta = newCard.querySelector('.show-task-text'); if (ta) ta.focus(); }
+  }, 50);
+}
+
+function deleteShowTask(showId, taskId) {
+  if (!showsData[showId] || !showsData[showId].tasks) return;
+  showsData[showId].tasks = showsData[showId].tasks.filter(t => t.id !== taskId);
+  renderShowDetail(showId);
+  saveState();
+}
+
+function cycleShowTaskStatus(showId, taskId) {
+  const task = _getShowTask(showId, taskId);
+  if (!task) return;
+  const cycle = ['nueva', 'en_proceso', 'finalizada'];
+  const idx = cycle.indexOf(task.status);
+  task.status = cycle[(idx + 1) % cycle.length];
+  renderShowDetail(showId);
+  saveState();
+}
+
+function saveShowTaskText(showId, taskId, val) {
+  const task = _getShowTask(showId, taskId);
+  if (!task) return;
+  task.text = val;
+  saveState();
+}
+
+function saveShowTaskNotes(showId, taskId, val) {
+  const task = _getShowTask(showId, taskId);
+  if (!task) return;
+  task.notes = val;
+  // Update the toggle button label without full re-render
+  const toggle = document.querySelector(`#stcard-${taskId} .show-task-notes-toggle`);
+  if (toggle) {
+    const hasNotes = val && val.trim().length > 0;
+    toggle.textContent = hasNotes ? `📝 ${val.length > 30 ? val.slice(0,30)+'…' : val}` : '＋ Agregar nota';
+  }
+  saveState();
+}
+
+function toggleShowTaskNotes(taskId) {
+  const area = document.getElementById('stnotes-' + taskId);
+  if (!area) return;
+  area.classList.toggle('open');
+  if (area.classList.contains('open')) {
+    const ta = area.querySelector('textarea');
+    if (ta) ta.focus();
+  }
+}
+
+function openTaskPersonPicker(showId, taskId) {
+  // Close any other open picker
+  document.querySelectorAll('.show-task-person-picker.open').forEach(p => {
+    if (p.id !== 'stpicker-' + taskId) p.classList.remove('open');
+  });
+  const picker = document.getElementById('stpicker-' + taskId);
+  if (picker) picker.classList.toggle('open');
+}
+
+function assignShowTaskPerson(showId, taskId, personKey) {
+  const task = _getShowTask(showId, taskId);
+  if (!task) return;
+  task.assignedTo = personKey;
+  const picker = document.getElementById('stpicker-' + taskId);
+  if (picker) picker.classList.remove('open');
+  renderShowDetail(showId);
+  saveState();
+}
+
+function _getShowTask(showId, taskId) {
+  if (!showsData[showId] || !showsData[showId].tasks) return null;
+  return showsData[showId].tasks.find(t => t.id === taskId) || null;
 }
 
 // ── Task helpers ──────────────────────────────────────────
@@ -2523,6 +2624,7 @@ function applyState(data) {
   }
   teamData.sections.splice(0, teamData.sections.length, ...(data.teamSections || []));
   renderShows(); renderEquipo(); renderMontagePills();
+  if (_detailShowId && showsData[_detailShowId]) renderShowDetail(_detailShowId);
   const cur = montajesData.currentShow || Object.values(SHOW_TO_MONTAJE)[0] || 'ntvg';
   if (montajesData.shows[cur]) renderMontajes(cur);
 }
