@@ -2250,34 +2250,67 @@ function downloadMontagePDF(montajeId) {
   const sdId2 = montajeToShow2[montajeId];
   let teamSectionHTML = '';
   if (sdId2) {
+    // Collect all people referenced in this montaje (events + tasks)
+    const usedLetters = new Set();
+    (show.days || []).forEach(day => {
+      (day.items || []).forEach(item => (item.people || []).forEach(p => usedLetters.add(p)));
+      (day.tasks  || []).forEach(task => { if (task.assignedTo) usedLetters.add(task.assignedTo); });
+    });
+
+    // Build schedule team table (assigned to show)
     let teamRows = '';
     teamData.sections.forEach(sec => {
       const assigned = sec.members.filter(m => m.showIds.includes(sdId2));
       if (!assigned.length) return;
-      teamRows += `<tr><td colspan="4" style="padding:10px 0 4px; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.8px; color:#888;">${sec.label}</td></tr>`;
+      teamRows += `<tr><td colspan="3" style="padding:10px 0 4px; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.8px; color:#888;">${sec.label}</td></tr>`;
       assigned.forEach(m => {
         const showRole = (m.showRoles || {})[sdId2] || m.role;
         const dark = m.colorHex === '#f5c542' ? 'color:#111;' : 'color:#fff;';
-        const avatar = `<span style="display:inline-flex; align-items:center; justify-content:center; width:28px; height:28px; border-radius:50%; background:${m.colorHex}; ${dark} font-size:11px; font-weight:700; flex-shrink:0;">${m.letter}</span>`;
-        const phone = m.phone ? `+598 ${m.phone}` : '—';
-        const email = m.email || '—';
+        const avatar = `<span style="display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:50%;background:${m.colorHex};${dark}font-size:11px;font-weight:700;flex-shrink:0;">${m.letter}</span>`;
         teamRows += `<tr style="border-bottom:1px solid #f0f0f0;">
-          <td style="padding:8px 10px 8px 0; vertical-align:middle; width:36px;">${avatar}</td>
-          <td style="padding:8px 6px 8px 0; vertical-align:middle; font-size:13px; font-weight:600;">${m.name}</td>
-          <td style="padding:8px 6px 8px 0; vertical-align:middle; font-size:12px; color:#555;">${showRole}</td>
-          <td style="padding:8px 0; vertical-align:middle; font-size:12px; color:#555; white-space:nowrap;">${email}<br><span style="color:#888;">${phone}</span></td>
+          <td style="padding:8px 10px 8px 0;vertical-align:middle;width:36px;">${avatar}</td>
+          <td style="padding:8px 6px 8px 0;vertical-align:middle;font-size:13px;font-weight:600;">${m.name}</td>
+          <td style="padding:8px 0;vertical-align:middle;font-size:12px;color:#555;">${showRole}</td>
         </tr>`;
       });
     });
-    if (teamRows) {
-      teamSectionHTML = `
-        <div style="margin-top:32px; page-break-inside:avoid;">
-          <div style="background:#1a1a2a; color:#fff; padding:8px 14px; border-radius:6px; font-size:13px; font-weight:700; margin-bottom:0; letter-spacing:0.3px;">Equipo asignado</div>
-          <table style="width:100%; border-collapse:collapse;">
-            <tbody>${teamRows}</tbody>
-          </table>
-        </div>`;
-    }
+
+    // Build contacts legend — all members referenced in schedule/tasks
+    let contactRows = '';
+    teamData.sections.forEach(sec => {
+      sec.members.forEach(m => {
+        if (!usedLetters.has(m.letter)) return;
+        const dark = m.colorHex === '#f5c542' ? 'color:#111;' : 'color:#fff;';
+        const avatar = `<span style="display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:50%;background:${m.colorHex};${dark}font-size:12px;font-weight:700;flex-shrink:0;">${m.letter}</span>`;
+        const phone = m.phone ? `(598)-${m.phone.replace(/^0/,'')}` : '—';
+        const email = m.email || '—';
+        contactRows += `<tr style="border-bottom:1px solid #f0f0f0;">
+          <td style="padding:10px 12px 10px 0;vertical-align:middle;width:40px;">${avatar}</td>
+          <td style="padding:10px 12px 10px 0;vertical-align:middle;">
+            <div style="font-size:14px;font-weight:700;color:#111;">${m.name}</div>
+            <div style="font-size:11px;color:#888;margin-top:2px;">${m.role}</div>
+          </td>
+          <td style="padding:10px 0;vertical-align:middle;font-size:12px;color:#333;">
+            <div>✉ ${email}</div>
+            <div style="margin-top:3px;color:#555;">📞 ${phone}</div>
+          </td>
+        </tr>`;
+      });
+    });
+
+    const teamBlock = teamRows ? `
+      <div style="margin-top:32px;page-break-inside:avoid;">
+        <div style="background:#1a1a2a;color:#fff;padding:8px 14px;border-radius:6px;font-size:13px;font-weight:700;letter-spacing:0.3px;">Equipo asignado</div>
+        <table style="width:100%;border-collapse:collapse;"><tbody>${teamRows}</tbody></table>
+      </div>` : '';
+
+    const contactBlock = contactRows ? `
+      <div style="margin-top:28px;page-break-inside:avoid;">
+        <div style="background:#1a1a2a;color:#fff;padding:8px 14px;border-radius:6px;font-size:13px;font-weight:700;letter-spacing:0.3px;">Referencias de color · Contactos</div>
+        <table style="width:100%;border-collapse:collapse;"><tbody>${contactRows}</tbody></table>
+      </div>` : '';
+
+    teamSectionHTML = teamBlock + contactBlock;
   }
 
   const fullHTML = `<!DOCTYPE html>
