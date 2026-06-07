@@ -603,6 +603,23 @@
     margin-top: 4px;
   }
   .show-tasks-add-btn:hover { color: var(--text); border-color: var(--text2); }
+  .show-activity-bell {
+    font-size: 14px;
+    animation: bell-shake 2.4s ease-in-out infinite;
+    display: inline-block;
+    transform-origin: top center;
+    cursor: default;
+  }
+  @keyframes bell-shake {
+    0%,55%,100% { transform: rotate(0deg); }
+    60%          { transform: rotate(15deg); }
+    65%          { transform: rotate(-12deg); }
+    70%          { transform: rotate(10deg); }
+    75%          { transform: rotate(-7deg); }
+    80%          { transform: rotate(4deg); }
+    85%          { transform: rotate(0deg); }
+  }
+
   .is-lector .show-task-del,
   .is-lector .show-tasks-add-btn,
   .is-lector .show-task-status { pointer-events: none; }
@@ -2502,12 +2519,26 @@ function closePdfOverlay() {
 }
 
 // ── renderShows (dynamic show cards) ─────────────────────
+function showActivityBell(data) {
+  const tasks = data.tasks || [];
+  const active = tasks.filter(t => t.status === 'en_proceso' || t.status === 'finalizada');
+  if (!active.length) return '';
+  const enProceso = tasks.filter(t => t.status === 'en_proceso').length;
+  const finalizada = tasks.filter(t => t.status === 'finalizada').length;
+  const tip = [enProceso ? `${enProceso} en proceso` : '', finalizada ? `${finalizada} finalizadas` : ''].filter(Boolean).join(' · ');
+  return `<span class="show-activity-bell" title="${tip}">🔔</span>`;
+}
+
 function buildSinfechaCardHTML(data) {
+  const bell = showActivityBell(data);
   return `<div class="show-card" data-id="${data.id}" onclick="openDetail('${data.id}')" style="cursor:pointer; background:rgba(245,197,66,0.14); border-color:rgba(245,197,66,0.35);">
     <div class="show-card-banner" style="background:${data.bannerColor || '#2e2e3e'};"></div>
     <div class="show-card-body">
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
-        <div class="show-name" style="margin-bottom:0;">${data.name}</div>
+        <div style="display:flex; align-items:center; gap:6px;">
+          <div class="show-name" style="margin-bottom:0;">${data.name}</div>
+          ${bell}
+        </div>
         ${cardActionBtns(data.id)}
       </div>
       <div class="show-venue">📍 ${data.venue}</div>
@@ -2521,6 +2552,7 @@ function buildConfirmadoCardHTML(data) {
   const badge = formatDateBadge(data.date);
   const mid = SHOW_TO_MONTAJE[data.id];
   const schBtn = mid ? `<button class="schedule-link" onclick="event.stopPropagation(); goToMontaje('${mid}')">📋 Ver schedule</button>` : '';
+  const bell = showActivityBell(data);
   return `<div class="show-card" data-id="${data.id}" onclick="openDetail('${data.id}')" style="background:rgba(46,194,126,0.14); border-color:rgba(46,194,126,0.35);">
     <div class="show-card-banner" style="background:${data.bannerColor};"></div>
     <div class="show-card-body">
@@ -2531,7 +2563,10 @@ function buildConfirmadoCardHTML(data) {
         </div>
         ${cardActionBtns(data.id)}
       </div>
-      <div class="show-name">${data.name}</div>
+      <div style="display:flex; align-items:center; gap:6px;">
+        <div class="show-name">${data.name}</div>
+        ${bell}
+      </div>
       <div class="show-venue">📍 ${data.venue}</div>
       ${data.time ? `<div style="margin-top:4px; font-size:13px; color:var(--text2);">🕘 ${data.time} hs</div>` : ''}
       ${schBtn}
