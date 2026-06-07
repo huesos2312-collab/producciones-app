@@ -345,6 +345,28 @@
     color: var(--text2); font-size: 14px;
   }
   .reuniones-empty div:first-child { font-size: 36px; margin-bottom: 12px; }
+  .meet-show-chip {
+    padding: 5px 11px; border-radius: 20px; font-size: 12px; font-weight: 600;
+    border: 1.5px solid var(--border); background: var(--surface2);
+    color: var(--text2); cursor: pointer; transition: all 0.15s;
+    white-space: nowrap;
+  }
+  .meet-show-chip:hover { border-color: var(--text2); color: var(--text); }
+  .meet-show-chip.selected {
+    background: var(--accent); border-color: var(--accent);
+    color: white;
+  }
+  .meet-show-chip.libre.selected {
+    background: var(--surface2); border-color: var(--text);
+    color: var(--text);
+  }
+  .meet-linked-badge {
+    display: inline-flex; align-items: center; gap: 5px;
+    font-size: 11px; font-weight: 600; padding: 2px 8px;
+    border-radius: 20px; background: rgba(232,64,58,0.12);
+    color: var(--accent); border: 1px solid rgba(232,64,58,0.25);
+    margin-bottom: 6px;
+  }
 
   /* Team screen */
   .team-card {
@@ -1068,9 +1090,16 @@
       <div style="font-size:18px; font-weight:700; margin-bottom:20px;" id="meet-panel-title">Nueva reunión</div>
 
       <div class="edit-form-group">
-        <label class="edit-form-label">Título</label>
-        <input class="edit-form-input" id="meet-title-input" type="text" placeholder="Ej: Coordinación NTVG...">
+        <label class="edit-form-label">Vinculado a show</label>
+        <div id="meet-show-chips" style="display:flex; gap:6px; flex-wrap:wrap; margin-top:6px;"></div>
       </div>
+
+      <div class="edit-form-group">
+        <label class="edit-form-label">Título</label>
+        <input class="edit-form-input" id="meet-title-input" type="text" placeholder="Ej: Coordinación, Visita técnica...">
+        <div style="font-size:11px; color:var(--text2); margin-top:5px;">Podés editar el título libremente.</div>
+      </div>
+      <input type="hidden" id="meet-linked-show">
 
       <div class="edit-form-group">
         <label class="edit-form-label">Fecha</label>
@@ -2773,11 +2802,17 @@ function buildMeetCardHTML(m) {
 
   const notesHTML = m.notes ? `<div class="meet-notes-text">${escHtml(m.notes)}</div>` : '';
 
+  const linkedShow = m.linkedShowId && showsData[m.linkedShowId] ? showsData[m.linkedShowId] : null;
+  const linkedBadge = linkedShow
+    ? `<div class="meet-linked-badge">🎤 ${escHtml(linkedShow.name)}</div>`
+    : '';
+
   return `<div class="meet-card" style="flex-direction:column; gap:0; padding:0; overflow:hidden;">
     <div style="display:flex; gap:14px; align-items:flex-start; padding:14px 16px;">
       ${timeHTML}
       <div class="meet-line" style="background:${color};"></div>
       <div class="meet-info">
+        ${linkedBadge}
         <div class="meet-title">${escHtml(m.title || 'Sin título')}</div>
         ${subLine ? `<div class="meet-sub">${subLine}</div>` : ''}
         ${notesHTML}
@@ -2789,6 +2824,38 @@ function buildMeetCardHTML(m) {
       </div>
     </div>
   </div>`;
+}
+
+function buildMeetShowChips(linkedShowId) {
+  const container = document.getElementById('meet-show-chips');
+  if (!container) return;
+  const shows = Object.values(showsData);
+
+  let html = `<button class="meet-show-chip libre${!linkedShowId ? ' selected' : ''}" onclick="selectMeetShow(null, this)">🗒 Tema libre</button>`;
+  shows.forEach(s => {
+    const sel = linkedShowId === s.id ? ' selected' : '';
+    html += `<button class="meet-show-chip${sel}" data-show-id="${s.id}" onclick="selectMeetShow('${s.id}', this)">${s.name}</button>`;
+  });
+  container.innerHTML = html;
+}
+
+function selectMeetShow(showId, chipEl) {
+  document.querySelectorAll('#meet-show-chips .meet-show-chip').forEach(c => c.classList.remove('selected'));
+  chipEl.classList.add('selected');
+  document.getElementById('meet-linked-show').value = showId || '';
+  // Auto-fill title if it's empty or was a show name before
+  const titleInput = document.getElementById('meet-title-input');
+  if (showId && showsData[showId]) {
+    if (!titleInput.value.trim() || titleInput.dataset.autoFilled === 'true') {
+      titleInput.value = showsData[showId].name;
+      titleInput.dataset.autoFilled = 'true';
+    }
+  } else {
+    if (titleInput.dataset.autoFilled === 'true') {
+      titleInput.value = '';
+      titleInput.dataset.autoFilled = 'false';
+    }
+  }
 }
 
 function openMeetPanel(id) {
@@ -2806,6 +2873,8 @@ function openMeetPanel(id) {
     const m = reunionesData[id];
     titleEl.textContent = 'Editar reunión';
     document.getElementById('meet-title-input').value = m.title || '';
+    document.getElementById('meet-title-input').dataset.autoFilled = 'false';
+    document.getElementById('meet-linked-show').value = m.linkedShowId || '';
     document.getElementById('meet-date-input').value  = m.date  || '';
     document.getElementById('meet-hour-input').value  = m.hour  || '';
     document.getElementById('meet-dur-input').value   = m.duration || '60 min';
@@ -2817,14 +2886,18 @@ function openMeetPanel(id) {
     });
     const colorBtn = document.querySelector(`#meet-color-btns .tl-color-swatch[data-color="${m.color || 'accent'}"]`);
     if (colorBtn) { document.querySelectorAll('#meet-color-btns .tl-color-swatch').forEach(b=>b.classList.remove('selected')); colorBtn.classList.add('selected'); }
+    buildMeetShowChips(m.linkedShowId || null);
   } else {
     titleEl.textContent = 'Nueva reunión';
     document.getElementById('meet-title-input').value = '';
+    document.getElementById('meet-title-input').dataset.autoFilled = 'false';
+    document.getElementById('meet-linked-show').value = '';
     document.getElementById('meet-date-input').value  = '';
     document.getElementById('meet-hour-input').value  = '';
     document.getElementById('meet-dur-input').value   = '60 min';
     document.getElementById('meet-loc-input').value   = '';
     document.getElementById('meet-notes-input').value = '';
+    buildMeetShowChips(null);
   }
 
   panel.classList.add('open');
@@ -2857,6 +2930,7 @@ function saveMeet() {
   reunionesData[id] = {
     id,
     title,
+    linkedShowId: document.getElementById('meet-linked-show').value || null,
     date:     document.getElementById('meet-date-input').value,
     hour:     document.getElementById('meet-hour-input').value,
     duration: document.getElementById('meet-dur-input').value,
