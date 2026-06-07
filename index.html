@@ -713,6 +713,66 @@
   }
   .day-task-row:hover .day-task-del { opacity: 1; }
   .day-task-del:hover { color: var(--accent); }
+
+  /* Labor Call */
+  .labor-call-section {
+    margin-top: 10px; border-top: 1px dashed var(--border); padding-top: 8px;
+  }
+  .labor-call-header {
+    display: flex; align-items: center; justify-content: space-between;
+    cursor: pointer; user-select: none;
+  }
+  .labor-call-title {
+    font-size: 10px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.7px; color: var(--text2);
+  }
+  .labor-call-toggle-icon {
+    font-size: 10px; color: var(--text2); transition: transform 0.2s;
+  }
+  .labor-call-toggle-icon.open { transform: rotate(180deg); }
+  .labor-call-body { display: none; margin-top: 6px; }
+  .labor-call-body.open { display: block; }
+  .labor-call-row {
+    display: flex; align-items: center; gap: 8px;
+    padding: 5px 0; border-bottom: 1px solid var(--border);
+    font-size: 12px;
+  }
+  .labor-call-row:last-of-type { border-bottom: none; }
+  .labor-call-qty {
+    font-size: 18px; font-weight: 700; color: var(--text);
+    min-width: 28px; text-align: center;
+  }
+  .labor-call-pax { font-size: 10px; color: var(--text2); }
+  .labor-call-time {
+    font-weight: 600; color: var(--text); flex-shrink: 0;
+  }
+  .labor-call-desc { flex: 1; color: var(--text2); }
+  .labor-call-del {
+    background: none; border: none; color: var(--text2);
+    font-size: 14px; cursor: pointer; padding: 0 2px; opacity: 0;
+    transition: opacity 0.15s;
+  }
+  .labor-call-row:hover .labor-call-del { opacity: 1; }
+  .labor-call-del:hover { color: var(--accent); }
+  .labor-call-add-row {
+    display: flex; gap: 6px; align-items: center; margin-top: 6px; flex-wrap: wrap;
+  }
+  .labor-call-input {
+    background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 6px; padding: 5px 8px; font-size: 12px;
+    color: var(--text); font-family: inherit; outline: none;
+  }
+  .labor-call-input:focus { border-color: var(--blue); }
+  .labor-call-input.qty  { width: 52px; text-align: center; }
+  .labor-call-input.time { width: 76px; }
+  .labor-call-input.desc { flex: 1; min-width: 80px; }
+  .labor-call-ok {
+    background: var(--blue); border: none; border-radius: 6px;
+    color: white; font-size: 11px; font-weight: 700; padding: 5px 10px;
+    cursor: pointer; font-family: inherit; white-space: nowrap;
+  }
+  .is-lector .labor-call-del,
+  .is-lector .labor-call-add-row { display: none !important; }
   .day-tasks-box {
     background: var(--surface2); border: 1px solid var(--border);
     border-radius: var(--radius-sm); margin-top: 10px; overflow: hidden;
@@ -1905,6 +1965,19 @@ function makeTlItemEl(item, showId, dayId) {
   const div = document.createElement('div');
   div.className = 'tl-item';
   div.dataset.itemId = item.id;
+  const laborCalls = item.laborCalls || [];
+  const lcRowsHtml = laborCalls.map(lc => `
+    <div class="labor-call-row" data-lc-id="${lc.id}">
+      <div>
+        <div class="labor-call-qty">${lc.qty}</div>
+        <div class="labor-call-pax">pax</div>
+      </div>
+      <div class="labor-call-time">${lc.time || '—'}</div>
+      <div class="labor-call-desc">${escHtml(lc.desc || '')}</div>
+      <button class="labor-call-del" onclick="deleteLaborCall('${showId}','${dayId}','${item.id}','${lc.id}')">×</button>
+    </div>`).join('');
+  const lcCount = laborCalls.length ? ` <span style="color:var(--blue);font-weight:700;">(${laborCalls.length})</span>` : '';
+
   div.innerHTML = `
     <div class="tl-dot" style="background:${color};"></div>
     <div class="tl-card">
@@ -1918,6 +1991,21 @@ function makeTlItemEl(item, showId, dayId) {
       <div class="tl-title">${item.title}</div>
       <div class="tl-desc">${item.desc}</div>
       <div class="tl-persons">${peopleHtml}</div>
+      <div class="labor-call-section">
+        <div class="labor-call-header" onclick="toggleLaborCall(this)">
+          <span class="labor-call-title">👷 Labor Call${lcCount}</span>
+          <span class="labor-call-toggle-icon">▾</span>
+        </div>
+        <div class="labor-call-body">
+          ${lcRowsHtml}
+          <div class="labor-call-add-row">
+            <input class="labor-call-input qty"  type="number" min="1" placeholder="# cant." title="Cantidad de personas">
+            <input class="labor-call-input time" type="time" title="Horario de llamado">
+            <input class="labor-call-input desc" type="text" placeholder="Descripción (opcional)">
+            <button class="labor-call-ok" onclick="addLaborCall('${showId}','${dayId}','${item.id}',this)">＋</button>
+          </div>
+        </div>
+      </div>
     </div>`;
   return div;
 }
@@ -3341,6 +3429,54 @@ function toggleDayTask(showId, dayId, taskId) {
     box.querySelector('.day-tasks-header span').textContent =
       `Tareas (${allTasks.filter(t=>t.status==='hecha').length}/${allTasks.length} hechas)`;
   }
+  saveState();
+}
+
+// ── Labor Call ────────────────────────────────────────────
+function toggleLaborCall(headerEl) {
+  const body = headerEl.nextElementSibling;
+  const icon = headerEl.querySelector('.labor-call-toggle-icon');
+  body.classList.toggle('open');
+  icon.classList.toggle('open');
+}
+
+function addLaborCall(showId, dayId, itemId, btn) {
+  const row = btn.closest('.labor-call-add-row');
+  const qtyInput  = row.querySelector('.qty');
+  const timeInput = row.querySelector('.time');
+  const descInput = row.querySelector('.desc');
+  const qty = parseInt(qtyInput.value);
+  if (!qty || qty < 1) { qtyInput.focus(); return; }
+  const day  = montajesData.shows[showId].days.find(d => d.id === dayId);
+  const item = day && day.items.find(i => i.id === itemId);
+  if (!item) return;
+  if (!item.laborCalls) item.laborCalls = [];
+  item.laborCalls.push({
+    id:   'lc-' + Date.now(),
+    qty:  qty,
+    time: timeInput.value || '',
+    desc: descInput.value.trim(),
+  });
+  qtyInput.value = ''; timeInput.value = ''; descInput.value = '';
+  renderMontajes(showId);
+  saveState();
+  // Re-open the labor call section after re-render
+  setTimeout(() => {
+    const itemEl = document.querySelector(`[data-item-id="${itemId}"]`);
+    if (itemEl) {
+      const body = itemEl.querySelector('.labor-call-body');
+      const icon = itemEl.querySelector('.labor-call-toggle-icon');
+      if (body) { body.classList.add('open'); icon && icon.classList.add('open'); }
+    }
+  }, 50);
+}
+
+function deleteLaborCall(showId, dayId, itemId, lcId) {
+  const day  = montajesData.shows[showId].days.find(d => d.id === dayId);
+  const item = day && day.items.find(i => i.id === itemId);
+  if (!item) return;
+  item.laborCalls = (item.laborCalls || []).filter(lc => lc.id !== lcId);
+  renderMontajes(showId);
   saveState();
 }
 
