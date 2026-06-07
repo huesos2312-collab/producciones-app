@@ -2668,20 +2668,14 @@ function deleteShow(id) {
   const data = showsData[id];
   if (!data) return;
   if (!confirm(`¿Eliminar "${data.name}"?\nEsta acción no se puede deshacer.`)) return;
-  const card = document.querySelector(`.show-card[data-id="${id}"]`);
-  if (card) {
-    card.style.transition = 'opacity 0.2s, transform 0.2s';
-    card.style.opacity = '0';
-    card.style.transform = 'scale(0.95)';
-    setTimeout(() => card.remove(), 200);
-  }
   const mId = SHOW_TO_MONTAJE[id];
   if (mId) {
     delete SHOW_TO_MONTAJE[id];
     delete montajesData.shows[mId];
-    renderMontagePills();
   }
   delete showsData[id];
+  renderShows();
+  renderMontagePills();
   saveState();
 }
 
