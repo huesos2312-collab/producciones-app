@@ -1058,6 +1058,68 @@
     padding: 10px 14px; margin-bottom: 14px;
     color: var(--text2); font-size: 14px;
   }
+
+  /* ── Director role ────────────────────────────────────── */
+  .is-director .budget-director-only { display: block !important; }
+  .budget-director-only { display: none !important; }
+
+  /* ── Login tabs ───────────────────────────────────────── */
+  .login-tabs { display:flex; gap:0; margin-bottom:20px; border-radius:var(--radius-sm); overflow:hidden; border:1px solid var(--border); }
+  .login-tab-btn { flex:1; padding:10px; background:var(--surface); color:var(--text2); font-size:13px; font-weight:600; font-family:inherit; border:none; cursor:pointer; transition:background 0.15s, color 0.15s; }
+  .login-tab-btn.active { background:var(--accent); color:#fff; }
+  #login-form, #register-form { width:100%; display:flex; flex-direction:column; gap:0; }
+
+  /* ── Novedades / Pinboard ─────────────────────────────── */
+  .novedades-section { margin-bottom:16px; }
+  .novedades-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:10px; }
+  .novedades-title { font-size:11px; font-weight:700; color:var(--text2); text-transform:uppercase; letter-spacing:0.8px; }
+  .novedad-card { border-radius:var(--radius); padding:12px 14px; margin-bottom:8px; position:relative; }
+  .novedad-text { font-size:14px; line-height:1.5; margin-bottom:6px; }
+  .novedad-meta { font-size:11px; opacity:0.7; }
+  .novedad-del { position:absolute; top:10px; right:10px; background:rgba(0,0,0,0.2); border:none; border-radius:50%; width:22px; height:22px; font-size:11px; cursor:pointer; color:inherit; font-family:inherit; display:flex; align-items:center; justify-content:center; }
+  .novedad-add-btn { font-size:18px; background:none; border:none; color:var(--text2); cursor:pointer; line-height:1; padding:0; }
+
+  /* ── Proveedores ──────────────────────────────────────── */
+  .proveedor-card { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:14px; margin-bottom:10px; display:flex; align-items:flex-start; gap:12px; }
+  .proveedor-icon { width:40px; height:40px; border-radius:var(--radius-sm); background:var(--surface2); display:flex; align-items:center; justify-content:center; font-size:18px; flex-shrink:0; }
+  .proveedor-name { font-size:15px; font-weight:700; }
+  .proveedor-cat { font-size:11px; color:var(--accent); font-weight:600; margin-top:2px; text-transform:uppercase; letter-spacing:0.5px; }
+  .proveedor-info { font-size:12px; color:var(--text2); margin-top:4px; line-height:1.5; }
+
+  /* ── Checklist de avance ─────────────────────────────── */
+  .checklist-item { display:flex; align-items:center; gap:10px; padding:10px 0; border-bottom:1px solid var(--border); }
+  .checklist-item:last-child { border-bottom:none; }
+  .checklist-check { width:22px; height:22px; border-radius:50%; border:2px solid var(--border); background:var(--surface2); cursor:pointer; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:12px; transition:background 0.15s, border-color 0.15s; }
+  .checklist-check.done { background:var(--green); border-color:var(--green); color:#fff; }
+  .checklist-text { flex:1; font-size:13px; line-height:1.4; }
+  .checklist-text.done { text-decoration:line-through; color:var(--text2); }
+  .checklist-del { background:none; border:none; color:var(--text2); cursor:pointer; font-size:14px; padding:4px; }
+
+  /* ── Presupuesto ─────────────────────────────────────── */
+  .presup-row { display:grid; grid-template-columns:1fr 80px 80px 28px; gap:6px; align-items:center; padding:8px 0; border-bottom:1px solid var(--border); }
+  .presup-row:last-child { border-bottom:none; }
+  .presup-row input { background:var(--surface2); border:1px solid var(--border); border-radius:var(--radius-sm); padding:5px 8px; color:var(--text); font-size:12px; font-family:inherit; width:100%; }
+  .presup-total-row { display:grid; grid-template-columns:1fr 80px 80px 28px; gap:6px; padding:10px 0 4px; font-size:12px; font-weight:700; color:var(--text2); border-top:2px solid var(--border); }
+  .presup-total-val { text-align:right; }
+  .presup-del-btn { background:none; border:none; color:var(--text2); cursor:pointer; font-size:13px; padding:2px; }
+  .presup-header { display:grid; grid-template-columns:1fr 80px 80px 28px; gap:6px; font-size:10px; color:var(--text2); font-weight:700; text-transform:uppercase; letter-spacing:0.5px; padding-bottom:6px; border-bottom:1px solid var(--border); }
+
+  /* ── Historial panel ─────────────────────────────────── */
+  .historial-panel { position:absolute; top:0; left:0; right:0; bottom:0; background:var(--bg); z-index:60; transform:translateX(100%); visibility:hidden; transition:transform 0.3s cubic-bezier(0.4,0,0.2,1), visibility 0s linear 0.3s; overflow-y:auto; overflow-x:hidden; scrollbar-width:none; }
+  .historial-panel::-webkit-scrollbar { display:none; }
+  .historial-panel.open { transform:translateX(0); visibility:visible; transition:transform 0.3s cubic-bezier(0.4,0,0.2,1), visibility 0s linear 0s; }
+  .historial-entry { display:flex; gap:10px; padding:12px 0; border-bottom:1px solid var(--border); }
+  .historial-dot { width:8px; height:8px; border-radius:50%; background:var(--accent); flex-shrink:0; margin-top:5px; }
+  .historial-text { font-size:13px; line-height:1.4; flex:1; }
+  .historial-time { font-size:11px; color:var(--text2); margin-top:3px; }
+  .historial-who { font-size:11px; color:var(--accent); font-weight:600; margin-top:2px; }
+
+  /* ── Invite section ──────────────────────────────────── */
+  .invite-card { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:14px; margin-bottom:10px; display:flex; align-items:center; justify-content:space-between; gap:10px; }
+  .invite-role-badge { font-size:10px; font-weight:700; padding:3px 8px; border-radius:10px; border:1px solid currentColor; }
+  .role-director { color:var(--purple); }
+  .role-editor { color:var(--green); }
+  .role-lector { color:var(--yellow); }
 </style>
 </head>
 <body>
@@ -1066,9 +1128,27 @@
   <img src="data:image/png;base64,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" width="90" height="90">
   <div class="login-title">producciones</div>
   <div class="login-sub">Gestión de shows</div>
-  <input class="login-input" id="login-email" type="email" placeholder="Correo electrónico" autocomplete="email">
-  <input class="login-input" id="login-password" type="password" placeholder="Contraseña" autocomplete="current-password" onkeydown="if(event.key==='Enter')loginUser()">
-  <button class="login-btn" onclick="loginUser()">Ingresar</button>
+  <div class="login-tabs">
+    <button class="login-tab-btn active" id="tab-btn-login" onclick="switchLoginTab('login')">Ingresar</button>
+    <button class="login-tab-btn" id="tab-btn-register" onclick="switchLoginTab('register')">Registrarse</button>
+  </div>
+
+  <!-- Login form -->
+  <div id="login-form">
+    <input class="login-input" id="login-email" type="email" placeholder="Correo electrónico" autocomplete="email">
+    <input class="login-input" id="login-password" type="password" placeholder="Contraseña" autocomplete="current-password" onkeydown="if(event.key==='Enter')loginUser()">
+    <button class="login-btn" onclick="loginUser()">Ingresar</button>
+  </div>
+
+  <!-- Register form -->
+  <div id="register-form" style="display:none;">
+    <input class="login-input" id="reg-name" type="text" placeholder="Tu nombre completo">
+    <input class="login-input" id="reg-email" type="email" placeholder="Correo electrónico" autocomplete="email">
+    <input class="login-input" id="reg-password" type="password" placeholder="Contraseña (mín. 6 caracteres)">
+    <input class="login-input" id="reg-password2" type="password" placeholder="Repetir contraseña" onkeydown="if(event.key==='Enter')registerUser()">
+    <button class="login-btn" onclick="registerUser()">Crear cuenta</button>
+  </div>
+
   <div id="login-error"></div>
   <div style="position:absolute; bottom:24px; font-size:10px; color:var(--text2); letter-spacing:1.5px; text-transform:uppercase;">Smart Bone</div>
 </div>
@@ -1111,7 +1191,19 @@
             <div class="header-sub">Junio – Julio 2026</div>
           </div>
         </div>
-        <button class="header-btn" onclick="openAddPanel()">＋</button>
+        <div style="display:flex;gap:6px;">
+          <button class="header-btn" style="font-size:16px;" onclick="openHistorial()">📋</button>
+          <button class="header-btn" onclick="openAddPanel()">＋</button>
+        </div>
+      </div>
+
+      <!-- Novedades / Pinboard -->
+      <div class="novedades-section" id="novedades-section" style="display:none;">
+        <div class="novedades-header">
+          <span class="novedades-title">📌 Novedades</span>
+          <button class="novedad-add-btn is-lector-hide" onclick="openNovedadPanel()">＋</button>
+        </div>
+        <div id="novedades-body"></div>
       </div>
 
       <div id="shows-body"></div>
@@ -1246,10 +1338,12 @@
         </div>
         <div style="font-size:11px; font-weight:700; color:var(--text2); text-transform:uppercase; letter-spacing:0.8px; margin-bottom:8px;">Rol de acceso</div>
         <div style="display:flex; gap:8px;">
+          <button id="btn-role-director" class="role-toggle-btn" onclick="setRole('director')" style="border-color:var(--purple); color:var(--purple);">👑 Director</button>
           <button id="btn-role-editor" class="role-toggle-btn active" onclick="setRole('editor')">✏ Editor</button>
           <button id="btn-role-lector" class="role-toggle-btn" onclick="setRole('lector')">👁 Lector</button>
         </div>
         <div style="font-size:11px; color:var(--text2); margin-top:10px; line-height:1.5;">
+          <strong style="color:var(--purple);">Director:</strong> acceso completo, incluye presupuestos.<br>
           <strong style="color:var(--text);">Editor:</strong> puede agregar, editar y eliminar contenido.<br>
           <strong style="color:var(--text);">Lector:</strong> solo puede ver la información.
         </div>
@@ -1262,6 +1356,24 @@
       </div>
 
       <div id="equipo-body"></div>
+
+      <!-- Invitaciones (director/editor only) -->
+      <div class="is-lector-hide" id="invites-section" style="margin-top:6px;">
+        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:10px;">
+          <div style="font-size:11px; font-weight:700; color:var(--text2); text-transform:uppercase; letter-spacing:0.8px;">✉ Invitaciones</div>
+          <button class="header-btn" style="font-size:14px; padding:4px 10px;" onclick="openInvitePanel()">＋ Invitar</button>
+        </div>
+        <div id="invites-body"><div style="font-size:13px; color:var(--text2); padding:10px 0;">Sin invitaciones pendientes.</div></div>
+      </div>
+
+      <!-- Proveedores -->
+      <div style="margin-top:20px;">
+        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:10px;">
+          <div style="font-size:11px; font-weight:700; color:var(--text2); text-transform:uppercase; letter-spacing:0.8px;">🏢 Proveedores</div>
+          <button class="header-btn is-lector-hide" style="font-size:14px; padding:4px 10px;" onclick="openProveedorPanel(null)">＋</button>
+        </div>
+        <div id="proveedores-body"><div style="font-size:13px; color:var(--text2); padding:10px 0;">Sin proveedores cargados.</div></div>
+      </div>
     </div>
 
     <!-- PERSON EDIT PANEL -->
@@ -1328,6 +1440,83 @@
 
       <!-- Dynamic show detail rendered by renderShowDetail(id) -->
       <div id="detail-dynamic" style="padding-bottom:60px;"></div>
+    </div>
+
+    <!-- HISTORIAL PANEL -->
+    <div class="historial-panel" id="historial-panel">
+      <div style="padding:16px 16px 0;">
+        <button class="back-btn" onclick="closeHistorial()" style="margin-bottom:12px;">← Volver</button>
+        <div style="font-size:18px; font-weight:700; margin-bottom:4px;">📋 Historial de cambios</div>
+        <div style="font-size:12px; color:var(--text2); margin-bottom:16px;">Últimas actualizaciones del equipo</div>
+        <div id="historial-body" style="padding-bottom:60px;"></div>
+      </div>
+    </div>
+
+    <!-- NOVEDAD PANEL -->
+    <div class="edit-panel" id="novedad-panel">
+      <button class="back-btn" onclick="closeNovedadPanel()">← Cancelar</button>
+      <div style="font-size:18px; font-weight:700; margin-bottom:20px;">📌 Nueva novedad</div>
+      <div style="font-size:12px; color:var(--text2); margin-bottom:6px; font-weight:600;">MENSAJE</div>
+      <textarea class="edit-form-input" id="novedad-text-input" rows="4" style="resize:none;" placeholder="Escribí el mensaje para el equipo..."></textarea>
+      <div style="font-size:12px; color:var(--text2); margin-bottom:8px; font-weight:600; margin-top:14px;">COLOR</div>
+      <div style="display:flex; gap:8px; margin-bottom:20px;">
+        <button class="tl-color-swatch selected" data-nc="accent" style="background:var(--accent);" onclick="selectNovedadColor(this,'accent')"></button>
+        <button class="tl-color-swatch" data-nc="blue" style="background:var(--blue);" onclick="selectNovedadColor(this,'blue')"></button>
+        <button class="tl-color-swatch" data-nc="purple" style="background:var(--purple);" onclick="selectNovedadColor(this,'purple')"></button>
+        <button class="tl-color-swatch" data-nc="green" style="background:var(--green);" onclick="selectNovedadColor(this,'green')"></button>
+        <button class="tl-color-swatch" data-nc="yellow" style="background:var(--yellow);" onclick="selectNovedadColor(this,'yellow')"></button>
+      </div>
+      <button class="save-btn" onclick="saveNovedad()">Publicar</button>
+    </div>
+
+    <!-- INVITE PANEL -->
+    <div class="edit-panel" id="invite-panel">
+      <button class="back-btn" onclick="closeInvitePanel()">← Cancelar</button>
+      <div style="font-size:18px; font-weight:700; margin-bottom:20px;">✉ Invitar al equipo</div>
+      <div style="font-size:12px; color:var(--text2); margin-bottom:6px; font-weight:600;">NOMBRE</div>
+      <input class="edit-form-input" id="invite-name" type="text" placeholder="Nombre de la persona">
+      <div style="font-size:12px; color:var(--text2); margin-bottom:6px; font-weight:600; margin-top:14px;">EMAIL</div>
+      <input class="edit-form-input" id="invite-email" type="email" placeholder="email@ejemplo.com">
+      <div style="font-size:12px; color:var(--text2); margin-bottom:8px; font-weight:600; margin-top:14px;">ROL</div>
+      <div style="display:flex; gap:8px; margin-bottom:20px;">
+        <button id="invite-role-director" class="role-toggle-btn" onclick="selectInviteRole('director')" style="border-color:var(--purple); color:var(--purple);">👑 Director</button>
+        <button id="invite-role-editor" class="role-toggle-btn active" onclick="selectInviteRole('editor')">✏ Editor</button>
+        <button id="invite-role-lector" class="role-toggle-btn" onclick="selectInviteRole('lector')">👁 Lector</button>
+      </div>
+      <div style="font-size:12px; color:var(--text2); margin-bottom:20px; line-height:1.5;">
+        La persona podrá registrarse con este email y su rol quedará asignado automáticamente.
+      </div>
+      <button class="save-btn" onclick="saveInvite()">Enviar invitación</button>
+      <div id="invite-error" style="color:var(--accent); font-size:13px; margin-top:10px;"></div>
+    </div>
+
+    <!-- PROVEEDOR PANEL -->
+    <div class="edit-panel" id="proveedor-panel">
+      <button class="back-btn" onclick="closeProveedorPanel()">← Cancelar</button>
+      <div style="font-size:18px; font-weight:700; margin-bottom:20px;" id="proveedor-panel-title">Nuevo proveedor</div>
+      <input type="hidden" id="proveedor-id">
+      <div style="font-size:12px; color:var(--text2); margin-bottom:6px; font-weight:600;">NOMBRE</div>
+      <input class="edit-form-input" id="proveedor-name" type="text" placeholder="Nombre del proveedor">
+      <div style="font-size:12px; color:var(--text2); margin-bottom:6px; font-weight:600; margin-top:14px;">RUBRO / CATEGORÍA</div>
+      <select class="edit-form-input" id="proveedor-cat">
+        <option value="Sonido">🔊 Sonido</option>
+        <option value="Iluminación">💡 Iluminación</option>
+        <option value="Estructura">🏗 Estructura / Escenario</option>
+        <option value="Transporte">🚚 Transporte / Logística</option>
+        <option value="Seguridad">🛡 Seguridad</option>
+        <option value="Catering">🍽 Catering</option>
+        <option value="Video">🎥 Video / Pantallas</option>
+        <option value="Otro">📦 Otro</option>
+      </select>
+      <div style="font-size:12px; color:var(--text2); margin-bottom:6px; font-weight:600; margin-top:14px;">CONTACTO</div>
+      <input class="edit-form-input" id="proveedor-contact" type="text" placeholder="Nombre del contacto">
+      <div style="font-size:12px; color:var(--text2); margin-bottom:6px; font-weight:600; margin-top:14px;">TELÉFONO</div>
+      <input class="edit-form-input" id="proveedor-phone" type="tel" placeholder="+598 9X XXX XXX">
+      <div style="font-size:12px; color:var(--text2); margin-bottom:6px; font-weight:600; margin-top:14px;">EMAIL</div>
+      <input class="edit-form-input" id="proveedor-email" type="email" placeholder="proveedor@email.com">
+      <div style="font-size:12px; color:var(--text2); margin-bottom:6px; font-weight:600; margin-top:14px;">NOTAS</div>
+      <textarea class="edit-form-input" id="proveedor-notes" rows="3" style="resize:none;" placeholder="Observaciones, condiciones, etc."></textarea>
+      <button class="save-btn" style="margin-top:20px;" onclick="saveProveedor()">Guardar proveedor</button>
     </div>
 
     <!-- EDIT PANEL -->
@@ -1670,6 +1859,32 @@ function renderShowDetail(id) {
       </div>`;
   }).join('');
 
+  // Checklist section
+  const checklist = data.checklist || [];
+  const doneCount = checklist.filter(c => c.status === 'ok').length;
+  const ckHTML = checklist.map(c => {
+    const done = c.status === 'ok';
+    return `<div class="checklist-item">
+      <div class="checklist-check ${done ? 'done' : ''}" onclick="toggleChecklistStatus('${id}','${c.id}')">${done ? '✓' : ''}</div>
+      <div class="checklist-text ${done ? 'done' : ''}">${escHtml(c.text)}</div>
+      <button class="checklist-del is-lector-hide" onclick="deleteChecklistItem('${id}','${c.id}')">×</button>
+    </div>`;
+  }).join('');
+
+  // Presupuesto section (director only)
+  const presup = data.presupuesto || { items: [], currency: 'USD' };
+  const pItems = presup.items || [];
+  const totalEst = pItems.reduce((s,p) => s + (parseFloat(p.estimated)||0), 0);
+  const totalReal = pItems.reduce((s,p) => s + (parseFloat(p.actual)||0), 0);
+  const fmtMoney = v => v ? v.toLocaleString('es-UY', { minimumFractionDigits:0, maximumFractionDigits:0 }) : '—';
+  const presupHTML = pItems.map(p => `
+    <div class="presup-row">
+      <input value="${escHtml(p.desc||'')}" placeholder="Descripción" onblur="updatePresupItem('${id}','${p.id}','desc',this.value)">
+      <input value="${escHtml(p.estimated||'')}" type="number" placeholder="Estimado" onblur="updatePresupItem('${id}','${p.id}','estimated',this.value)" style="text-align:right;">
+      <input value="${escHtml(p.actual||'')}" type="number" placeholder="Real" onblur="updatePresupItem('${id}','${p.id}','actual',this.value)" style="text-align:right;">
+      <button class="presup-del-btn" onclick="deletePresupItem('${id}','${p.id}')">×</button>
+    </div>`).join('');
+
   el.innerHTML = `
     ${headerHTML}
     <div style="padding:0 18px;">
@@ -1677,10 +1892,93 @@ function renderShowDetail(id) {
       <div class="section-label" style="margin-bottom:10px;">Tareas del show</div>
       <div id="show-tasks-list">${tasksHTML}</div>
       <button class="show-tasks-add-btn" onclick="addShowTask('${id}')">＋ Agregar tarea</button>
+
+      <hr class="section-divider" style="margin-top:20px;">
+      <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:10px;">
+        <div class="section-label" style="margin:0;">✅ Checklist de avance${checklist.length ? ` <span style="font-size:11px; color:var(--text2); font-weight:400;">${doneCount}/${checklist.length}</span>` : ''}</div>
+        <button class="show-tasks-add-btn is-lector-hide" style="margin:0; padding:4px 10px; font-size:12px;" onclick="addChecklistItem('${id}')">＋</button>
+      </div>
+      <div id="show-checklist-list">
+        ${ckHTML || '<div style="font-size:13px; color:var(--text2); padding:10px 0;">Sin ítems. Tocá ＋ para agregar.</div>'}
+      </div>
+
+      <div class="budget-director-only">
+        <hr class="section-divider" style="margin-top:20px;">
+        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:10px;">
+          <div class="section-label" style="margin:0;">💰 Presupuesto <span style="font-size:10px; color:var(--purple); font-weight:700; padding:2px 6px; border:1px solid var(--purple); border-radius:8px;">DIRECTOR</span></div>
+          <button class="show-tasks-add-btn" style="margin:0; padding:4px 10px; font-size:12px;" onclick="addPresupItem('${id}')">＋ Ítem</button>
+        </div>
+        ${pItems.length ? `
+          <div class="presup-header"><div>Descripción</div><div style="text-align:right;">Estimado</div><div style="text-align:right;">Real</div><div></div></div>
+          <div id="show-presup-list">${presupHTML}</div>
+          <div class="presup-total-row">
+            <div>TOTAL</div>
+            <div class="presup-total-val">${fmtMoney(totalEst)}</div>
+            <div class="presup-total-val" style="color:${totalReal > totalEst ? 'var(--accent)' : 'var(--green)'};">${fmtMoney(totalReal)}</div>
+            <div></div>
+          </div>` : '<div style="font-size:13px; color:var(--text2); padding:10px 0;">Sin ítems de presupuesto. Tocá ＋ para agregar.</div>'}
+      </div>
     </div>`;
 
   // Auto-resize all textareas
   el.querySelectorAll('.show-task-text').forEach(ta => autoResizeTA(ta));
+}
+
+// ── Checklist functions ────────────────────────────────────
+function addChecklistItem(showId) {
+  const data = showsData[showId];
+  if (!data) return;
+  if (!data.checklist) data.checklist = [];
+  const text = prompt('Ítem de checklist:');
+  if (!text || !text.trim()) return;
+  data.checklist.push({ id: 'ck-'+Date.now(), text: text.trim(), status: 'pendiente' });
+  renderShowDetail(showId);
+  saveState('Checklist actualizado: ' + data.name);
+}
+function toggleChecklistStatus(showId, itemId) {
+  const data = showsData[showId]; if (!data) return;
+  const item = (data.checklist || []).find(c => c.id === itemId); if (!item) return;
+  item.status = item.status === 'ok' ? 'pendiente' : 'ok';
+  renderShowDetail(showId);
+  saveState('Checklist: ' + data.name);
+}
+function deleteChecklistItem(showId, itemId) {
+  const data = showsData[showId]; if (!data) return;
+  data.checklist = (data.checklist || []).filter(c => c.id !== itemId);
+  renderShowDetail(showId);
+  saveState('Checklist actualizado: ' + data.name);
+}
+
+// ── Presupuesto functions ──────────────────────────────────
+function addPresupItem(showId) {
+  const data = showsData[showId]; if (!data) return;
+  if (!data.presupuesto) data.presupuesto = { items: [], currency: 'USD' };
+  if (!data.presupuesto.items) data.presupuesto.items = [];
+  data.presupuesto.items.push({ id:'pp-'+Date.now(), desc:'', estimated:'', actual:'' });
+  renderShowDetail(showId);
+}
+function updatePresupItem(showId, itemId, field, value) {
+  const data = showsData[showId]; if (!data) return;
+  const item = (data.presupuesto?.items || []).find(p => p.id === itemId); if (!item) return;
+  item[field] = value;
+  // Update totals without full re-render
+  const pItems = data.presupuesto.items;
+  const totalEst  = pItems.reduce((s,p) => s + (parseFloat(p.estimated)||0), 0);
+  const totalReal = pItems.reduce((s,p) => s + (parseFloat(p.actual)||0), 0);
+  const fmtMoney = v => v ? v.toLocaleString('es-UY', { minimumFractionDigits:0, maximumFractionDigits:0 }) : '—';
+  const tr = document.querySelector('.presup-total-row');
+  if (tr) {
+    const cells = tr.querySelectorAll('.presup-total-val');
+    if (cells[0]) cells[0].textContent = fmtMoney(totalEst);
+    if (cells[1]) { cells[1].textContent = fmtMoney(totalReal); cells[1].style.color = totalReal > totalEst ? 'var(--accent)' : 'var(--green)'; }
+  }
+  saveState('Presupuesto: ' + data.name);
+}
+function deletePresupItem(showId, itemId) {
+  const data = showsData[showId]; if (!data) return;
+  if (data.presupuesto?.items) data.presupuesto.items = data.presupuesto.items.filter(p => p.id !== itemId);
+  renderShowDetail(showId);
+  saveState('Presupuesto: ' + data.name);
 }
 
 function formatFullDate(dateStr) {
@@ -2184,24 +2482,82 @@ function saveTlEdit() {
 
 // ── Role management ───────────────────────────────────────
 let currentRole = 'editor';
+let _myName = '';
 
 function setRole(role) {
   currentRole = role;
   const shell = document.querySelector('.phone-shell');
-  if (role === 'lector') {
-    shell.classList.add('is-lector');
-  } else {
-    shell.classList.remove('is-lector');
-  }
+  shell.classList.remove('is-lector', 'is-director');
+  if (role === 'lector') shell.classList.add('is-lector');
+  if (role === 'director') shell.classList.add('is-director');
+
+  const dirBtn  = document.getElementById('btn-role-director');
   const editorBtn = document.getElementById('btn-role-editor');
   const lectorBtn = document.getElementById('btn-role-lector');
+  if (dirBtn)   { dirBtn.classList.toggle('active', role === 'director'); dirBtn.style.background = role === 'director' ? 'var(--purple)' : ''; dirBtn.style.color = role === 'director' ? 'white' : 'var(--purple)'; dirBtn.style.borderColor = 'var(--purple)'; }
   if (editorBtn) editorBtn.classList.toggle('active', role === 'editor');
   if (lectorBtn) lectorBtn.classList.toggle('active', role === 'lector');
   const badge = document.getElementById('role-status-badge');
   if (badge) {
-    badge.textContent = role === 'editor' ? '✏ EDITOR' : '👁 LECTOR';
-    badge.style.color = role === 'editor' ? 'var(--green)' : 'var(--yellow)';
+    const labels = { director: '👑 DIRECTOR', editor: '✏ EDITOR', lector: '👁 LECTOR' };
+    const colors = { director: 'var(--purple)', editor: 'var(--green)', lector: 'var(--yellow)' };
+    badge.textContent = labels[role] || '✏ EDITOR';
+    badge.style.color = colors[role] || 'var(--green)';
   }
+}
+
+// ── Login tab switching ────────────────────────────────
+function switchLoginTab(tab) {
+  const isLogin = tab === 'login';
+  document.getElementById('login-form').style.display    = isLogin ? 'flex' : 'none';
+  document.getElementById('register-form').style.display = isLogin ? 'none' : 'flex';
+  document.getElementById('tab-btn-login').classList.toggle('active', isLogin);
+  document.getElementById('tab-btn-register').classList.toggle('active', !isLogin);
+  document.getElementById('login-error').textContent = '';
+}
+
+async function registerUser() {
+  const name  = document.getElementById('reg-name').value.trim();
+  const email = document.getElementById('reg-email').value.trim();
+  const pwd   = document.getElementById('reg-password').value;
+  const pwd2  = document.getElementById('reg-password2').value;
+  const errEl = document.getElementById('login-error');
+  errEl.textContent = '';
+  if (!name)           { errEl.textContent = 'Ingresá tu nombre.'; return; }
+  if (!email)          { errEl.textContent = 'Ingresá tu email.'; return; }
+  if (pwd.length < 6)  { errEl.textContent = 'La contraseña debe tener al menos 6 caracteres.'; return; }
+  if (pwd !== pwd2)    { errEl.textContent = 'Las contraseñas no coinciden.'; return; }
+  try {
+    const cred = await auth.createUserWithEmailAndPassword(email, pwd);
+    const uid  = cred.user.uid;
+    // Check invite for assigned role
+    let role = 'lector';
+    try {
+      const invDoc = await db.collection('invites').doc(email).get();
+      if (invDoc.exists) {
+        role = invDoc.data().role || 'lector';
+        await db.collection('invites').doc(email).delete();
+      }
+    } catch(e) {}
+    await db.collection('userRoles').doc(uid).set({ name, email, role, createdAt: firebase.firestore.FieldValue.serverTimestamp() });
+    // onAuthStateChanged will handle the rest
+  } catch(e) {
+    const msgs = { 'auth/email-already-in-use': 'Ese email ya está registrado.', 'auth/invalid-email': 'Email inválido.' };
+    errEl.textContent = msgs[e.code] || 'Error al registrarse.';
+  }
+}
+
+async function loadUserRole(uid) {
+  try {
+    const doc = await db.collection('userRoles').doc(uid).get();
+    if (doc.exists) {
+      const data = doc.data();
+      _myName = data.name || '';
+      setRole(data.role || 'editor');
+      return data.role || 'editor';
+    }
+  } catch(e) { console.error('loadUserRole:', e); }
+  return 'editor';
 }
 
 // ── Team data store ───────────────────────────────────────
@@ -2720,16 +3076,17 @@ const auth = firebase.auth();
 let _myUid = null, _saving = false, _initialized = false, _unsub = null;
 let _lastPdfHtml = '';
 
-auth.onAuthStateChanged((user) => {
+auth.onAuthStateChanged(async (user) => {
   if (user) {
     _myUid = user.uid;
     document.getElementById('login-screen').style.display = 'none';
     document.getElementById('app').style.display = 'flex';
     const el = document.getElementById('session-email');
     if (el) el.textContent = user.email;
+    await loadUserRole(user.uid);
     startSync();
   } else {
-    _myUid = null; _initialized = false;
+    _myUid = null; _initialized = false; _myName = '';
     document.getElementById('login-screen').style.display = 'flex';
     document.getElementById('app').style.display = 'none';
     if (_unsub) { _unsub(); _unsub = null; }
@@ -2750,8 +3107,14 @@ function logoutUser() {
   if (confirm('¿Cerrar sesión?')) auth.signOut();
 }
 
-async function saveState() {
+async function saveState(actionLabel) {
   if (!_myUid) return;
+  // Log historial entry
+  if (actionLabel) {
+    const entry = { id: 'h-'+Date.now(), who: _myName || _myUid, action: actionLabel, ts: Date.now() };
+    historialData.unshift(entry);
+    if (historialData.length > 60) historialData.splice(60);
+  }
   try {
     _saving = true;
     await db.collection('state').doc('main').set({
@@ -2760,6 +3123,9 @@ async function saveState() {
       showMontajeMap: { ...SHOW_TO_MONTAJE },
       teamSections: teamData.sections,
       reuniones: reunionesData,
+      novedades: novedadesData,
+      proveedores: proveedoresData,
+      historial: historialData,
       updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
       updatedBy: _myUid
     });
@@ -2780,7 +3146,14 @@ function applyState(data) {
   teamData.sections.splice(0, teamData.sections.length, ...(data.teamSections || []));
   Object.keys(reunionesData).forEach(k => delete reunionesData[k]);
   Object.assign(reunionesData, data.reuniones || {});
+  Object.keys(novedadesData).forEach(k => delete novedadesData[k]);
+  Object.assign(novedadesData, data.novedades || {});
+  Object.keys(proveedoresData).forEach(k => delete proveedoresData[k]);
+  Object.assign(proveedoresData, data.proveedores || {});
+  historialData.splice(0);
+  (data.historial || []).forEach(e => historialData.push(e));
   renderShows(); renderEquipo(); renderMontagePills(); renderReuniones();
+  renderNovedades(); renderProveedores(); renderInvites();
   if (_detailShowId && showsData[_detailShowId]) renderShowDetail(_detailShowId);
   const cur = montajesData.currentShow || Object.values(SHOW_TO_MONTAJE)[0] || 'ntvg';
   if (montajesData.shows[cur]) renderMontajes(cur);
@@ -2791,6 +3164,7 @@ function startSync() {
     if (!doc.exists) {
       saveState().then(() => {
         renderShows(); renderEquipo(); renderMontagePills(); renderReuniones();
+        renderNovedades(); renderProveedores(); renderInvites();
         const firstMId = Object.values(SHOW_TO_MONTAJE)[0] || 'ntvg';
         setTimeout(() => renderMontajes(firstMId), 400);
         setTimeout(() => { const s = document.getElementById('splash'); if(s) s.classList.add('hidden'); }, 1500);
@@ -2808,6 +3182,223 @@ function startSync() {
     }
   }, (err) => console.error('onSnapshot:', err));
 }
+
+// ── Novedades data store ──────────────────────────────────
+let novedadesData = {};
+const NOVEDAD_COLORS = {
+  accent:  { bg:'rgba(232,64,58,0.15)',  text:'#e8403a' },
+  blue:    { bg:'rgba(74,158,255,0.15)', text:'#4a9eff' },
+  purple:  { bg:'rgba(168,85,247,0.15)', text:'#a855f7' },
+  green:   { bg:'rgba(46,194,126,0.15)', text:'#2ec27e' },
+  yellow:  { bg:'rgba(245,197,66,0.15)', text:'#f5c542' },
+};
+let _novedadColorSel = 'accent';
+
+function renderNovedades() {
+  const body = document.getElementById('novedades-body');
+  const sec  = document.getElementById('novedades-section');
+  if (!body || !sec) return;
+  const all = Object.values(novedadesData).sort((a,b) => b.ts - a.ts);
+  sec.style.display = all.length ? 'block' : 'none';
+  if (!all.length) { body.innerHTML = ''; return; }
+  body.innerHTML = all.map(n => {
+    const c = NOVEDAD_COLORS[n.color] || NOVEDAD_COLORS.accent;
+    const d = new Date(n.ts).toLocaleDateString('es-UY', { day:'numeric', month:'short' });
+    return `<div class="novedad-card" style="background:${c.bg}; color:${c.text};">
+      <button class="novedad-del is-lector-hide" onclick="deleteNovedad('${n.id}')">✕</button>
+      <div class="novedad-text">${escHtml(n.text)}</div>
+      <div class="novedad-meta">${escHtml(n.who)} · ${d}</div>
+    </div>`;
+  }).join('');
+}
+
+function openNovedadPanel() {
+  _novedadColorSel = 'accent';
+  document.getElementById('novedad-text-input').value = '';
+  document.querySelectorAll('#novedad-panel .tl-color-swatch').forEach(b => b.classList.toggle('selected', b.dataset.nc === 'accent'));
+  document.getElementById('novedad-panel').classList.add('open');
+}
+function closeNovedadPanel() { document.getElementById('novedad-panel').classList.remove('open'); }
+function selectNovedadColor(el, key) {
+  _novedadColorSel = key;
+  document.querySelectorAll('#novedad-panel .tl-color-swatch').forEach(b => b.classList.toggle('selected', b.dataset.nc === key));
+}
+function saveNovedad() {
+  const text = document.getElementById('novedad-text-input').value.trim();
+  if (!text) return;
+  const id = 'nv-' + Date.now();
+  novedadesData[id] = { id, text, color: _novedadColorSel, who: _myName || 'Equipo', ts: Date.now() };
+  renderNovedades();
+  saveState('Novedad publicada');
+  closeNovedadPanel();
+}
+function deleteNovedad(id) {
+  delete novedadesData[id];
+  renderNovedades();
+  saveState('Novedad eliminada');
+}
+
+// ── Proveedores data store ────────────────────────────────
+let proveedoresData = {};
+const PROVEEDOR_ICONS = { Sonido:'🔊', Iluminación:'💡', Estructura:'🏗', Transporte:'🚚', Seguridad:'🛡', Catering:'🍽', Video:'🎥', Otro:'📦' };
+
+function renderProveedores() {
+  const body = document.getElementById('proveedores-body');
+  if (!body) return;
+  const all = Object.values(proveedoresData).sort((a,b) => (a.name||'').localeCompare(b.name||''));
+  if (!all.length) { body.innerHTML = '<div style="font-size:13px; color:var(--text2); padding:10px 0;">Sin proveedores cargados.</div>'; return; }
+  body.innerHTML = all.map(p => {
+    const icon = PROVEEDOR_ICONS[p.cat] || '📦';
+    return `<div class="proveedor-card">
+      <div class="proveedor-icon">${icon}</div>
+      <div style="flex:1; min-width:0;">
+        <div class="proveedor-name">${escHtml(p.name)}</div>
+        <div class="proveedor-cat">${escHtml(p.cat)}</div>
+        <div class="proveedor-info">
+          ${p.contact ? `👤 ${escHtml(p.contact)}<br>` : ''}
+          ${p.phone ? `📞 ${escHtml(p.phone)}<br>` : ''}
+          ${p.email ? `✉ ${escHtml(p.email)}<br>` : ''}
+          ${p.notes ? escHtml(p.notes) : ''}
+        </div>
+      </div>
+      <div style="display:flex; flex-direction:column; gap:6px; flex-shrink:0;" class="is-lector-hide">
+        <button class="del-card-btn" style="width:24px;height:24px;font-size:11px;" onclick="deleteProveedor('${p.id}')">🗑</button>
+        <button class="edit-card-btn" style="width:24px;height:24px;font-size:11px;" onclick="openProveedorPanel('${p.id}')">✏</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function openProveedorPanel(id) {
+  const pv = id ? proveedoresData[id] : null;
+  document.getElementById('proveedor-panel-title').textContent = pv ? 'Editar proveedor' : 'Nuevo proveedor';
+  document.getElementById('proveedor-id').value    = id || '';
+  document.getElementById('proveedor-name').value  = pv?.name    || '';
+  document.getElementById('proveedor-cat').value   = pv?.cat     || 'Sonido';
+  document.getElementById('proveedor-contact').value = pv?.contact || '';
+  document.getElementById('proveedor-phone').value = pv?.phone   || '';
+  document.getElementById('proveedor-email').value = pv?.email   || '';
+  document.getElementById('proveedor-notes').value = pv?.notes   || '';
+  document.getElementById('proveedor-panel').classList.add('open');
+}
+function closeProveedorPanel() { document.getElementById('proveedor-panel').classList.remove('open'); }
+function saveProveedor() {
+  const name = document.getElementById('proveedor-name').value.trim();
+  if (!name) return;
+  const id = document.getElementById('proveedor-id').value || ('pv-' + Date.now());
+  proveedoresData[id] = {
+    id, name,
+    cat:     document.getElementById('proveedor-cat').value,
+    contact: document.getElementById('proveedor-contact').value.trim(),
+    phone:   document.getElementById('proveedor-phone').value.trim(),
+    email:   document.getElementById('proveedor-email').value.trim(),
+    notes:   document.getElementById('proveedor-notes').value.trim(),
+  };
+  renderProveedores();
+  saveState('Proveedor guardado: ' + name);
+  closeProveedorPanel();
+}
+function deleteProveedor(id) {
+  if (!confirm('¿Eliminar este proveedor?')) return;
+  const n = proveedoresData[id]?.name || '';
+  delete proveedoresData[id];
+  renderProveedores();
+  saveState('Proveedor eliminado: ' + n);
+}
+
+// ── Invitaciones ──────────────────────────────────────────
+let _inviteRoleSel = 'editor';
+
+async function renderInvites() {
+  const body = document.getElementById('invites-body');
+  if (!body) return;
+  try {
+    const snap = await db.collection('invites').get();
+    if (snap.empty) { body.innerHTML = '<div style="font-size:13px; color:var(--text2); padding:10px 0;">Sin invitaciones pendientes.</div>'; return; }
+    body.innerHTML = snap.docs.map(d => {
+      const inv = d.data();
+      const roleColors = { director:'var(--purple)', editor:'var(--green)', lector:'var(--yellow)' };
+      const roleLabels = { director:'👑 Director', editor:'✏ Editor', lector:'👁 Lector' };
+      const col = roleColors[inv.role] || 'var(--text2)';
+      return `<div class="invite-card">
+        <div>
+          <div style="font-size:14px; font-weight:700;">${escHtml(inv.name)}</div>
+          <div style="font-size:12px; color:var(--text2);">${escHtml(d.id)}</div>
+        </div>
+        <div style="display:flex; align-items:center; gap:8px;">
+          <span class="invite-role-badge" style="color:${col}; border-color:${col};">${roleLabels[inv.role]||inv.role}</span>
+          <button class="del-card-btn" style="width:22px;height:22px;font-size:11px;" onclick="deleteInvite('${d.id}')">🗑</button>
+        </div>
+      </div>`;
+    }).join('');
+  } catch(e) { body.innerHTML = '<div style="font-size:12px; color:var(--text2);">—</div>'; }
+}
+
+function openInvitePanel() {
+  _inviteRoleSel = 'editor';
+  document.getElementById('invite-name').value  = '';
+  document.getElementById('invite-email').value = '';
+  document.getElementById('invite-error').textContent = '';
+  ['director','editor','lector'].forEach(r => {
+    const b = document.getElementById('invite-role-' + r);
+    if (b) b.classList.toggle('active', r === 'editor');
+  });
+  document.getElementById('invite-panel').classList.add('open');
+}
+function closeInvitePanel() { document.getElementById('invite-panel').classList.remove('open'); }
+function selectInviteRole(role) {
+  _inviteRoleSel = role;
+  ['director','editor','lector'].forEach(r => {
+    const b = document.getElementById('invite-role-' + r);
+    if (b) b.classList.toggle('active', r === role);
+  });
+}
+async function saveInvite() {
+  const name  = document.getElementById('invite-name').value.trim();
+  const email = document.getElementById('invite-email').value.trim().toLowerCase();
+  const errEl = document.getElementById('invite-error');
+  errEl.textContent = '';
+  if (!name || !email) { errEl.textContent = 'Completá nombre y email.'; return; }
+  if (!email.includes('@')) { errEl.textContent = 'Email inválido.'; return; }
+  try {
+    await db.collection('invites').doc(email).set({ name, role: _inviteRoleSel, invitedBy: _myName || _myUid, ts: Date.now() });
+    renderInvites();
+    closeInvitePanel();
+  } catch(e) { errEl.textContent = 'Error al guardar. Intentá de nuevo.'; }
+}
+async function deleteInvite(email) {
+  if (!confirm('¿Eliminar esta invitación?')) return;
+  await db.collection('invites').doc(email).delete();
+  renderInvites();
+}
+
+// ── Historial ─────────────────────────────────────────────
+let historialData = [];
+
+function renderHistorial() {
+  const body = document.getElementById('historial-body');
+  if (!body) return;
+  if (!historialData.length) { body.innerHTML = '<div style="font-size:13px; color:var(--text2); padding:20px 0; text-align:center;">Sin cambios registrados todavía.</div>'; return; }
+  const fmtTime = (ts) => {
+    const d = new Date(ts);
+    return d.toLocaleDateString('es-UY', { day:'numeric', month:'short' }) + ' ' + d.toLocaleTimeString('es-UY', { hour:'2-digit', minute:'2-digit' });
+  };
+  body.innerHTML = historialData.map(e =>
+    `<div class="historial-entry">
+      <div class="historial-dot"></div>
+      <div>
+        <div class="historial-text">${escHtml(e.action)}</div>
+        <div class="historial-who">${escHtml(e.who)}</div>
+        <div class="historial-time">${fmtTime(e.ts)}</div>
+      </div>
+    </div>`
+  ).join('');
+}
+function openHistorial() {
+  renderHistorial();
+  document.getElementById('historial-panel').classList.add('open');
+}
+function closeHistorial() { document.getElementById('historial-panel').classList.remove('open'); }
 
 // ── Reuniones data store ──────────────────────────────────
 let reunionesData = {};
