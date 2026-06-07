@@ -323,6 +323,28 @@
   .meet-title { font-size: 15px; font-weight: 600; margin-bottom: 3px; }
   .meet-sub { font-size: 12px; color: var(--text2); margin-bottom: 8px; }
   .meet-persons { display: flex; gap: 4px; }
+  .meet-card-actions {
+    display: flex; gap: 6px; margin-top: 10px;
+  }
+  .meet-edit-btn, .meet-del-btn {
+    background: none; border: 1px solid var(--border); border-radius: 6px;
+    font-size: 11px; padding: 4px 10px; cursor: pointer;
+    color: var(--text2); font-family: inherit; transition: color 0.15s, border-color 0.15s;
+  }
+  .meet-edit-btn:hover { color: var(--text); border-color: var(--text2); }
+  .meet-del-btn:hover  { color: var(--accent); border-color: var(--accent); }
+  .meet-notes-text {
+    font-size: 12px; color: var(--text2); margin-top: 6px;
+    line-height: 1.5; font-style: italic;
+  }
+  .is-lector .meet-edit-btn,
+  .is-lector .meet-del-btn,
+  .is-lector .is-lector-hide { display: none !important; }
+  .reuniones-empty {
+    text-align: center; padding: 60px 20px;
+    color: var(--text2); font-size: 14px;
+  }
+  .reuniones-empty div:first-child { font-size: 36px; margin-bottom: 12px; }
 
   /* Team screen */
   .team-card {
@@ -1033,104 +1055,84 @@
       <div class="header">
         <div>
           <div class="header-title">🤝 Reuniones</div>
-          <div class="header-sub">Esta semana</div>
+          <div class="header-sub" id="reuniones-sub">Cargando...</div>
         </div>
-        <button class="header-btn">＋</button>
+        <button class="header-btn is-lector-hide" onclick="openMeetPanel(null)">＋</button>
+      </div>
+      <div id="reuniones-body" style="padding-bottom:20px;"></div>
+    </div>
+
+    <!-- MEET EDIT PANEL -->
+    <div class="edit-panel" id="meet-panel">
+      <button class="back-btn" onclick="closeMeetPanel()">← Cancelar</button>
+      <div style="font-size:18px; font-weight:700; margin-bottom:20px;" id="meet-panel-title">Nueva reunión</div>
+
+      <div class="edit-form-group">
+        <label class="edit-form-label">Título</label>
+        <input class="edit-form-input" id="meet-title-input" type="text" placeholder="Ej: Coordinación NTVG...">
       </div>
 
-      <div class="search-bar">
-        <span>🔍</span>
-        <span>Buscar reunión...</span>
+      <div class="edit-form-group">
+        <label class="edit-form-label">Fecha</label>
+        <input class="edit-form-input" id="meet-date-input" type="date">
       </div>
 
-      <div class="section-label">Lunes 8 Jun</div>
-
-      <div class="meet-card">
-        <div class="meet-time-col">
-          <div class="meet-hour">10</div>
-          <div class="meet-ampm">AM</div>
+      <div class="edit-form-group" style="display:flex; gap:10px;">
+        <div style="flex:1;">
+          <label class="edit-form-label">Hora</label>
+          <input class="edit-form-input" id="meet-hour-input" type="time">
         </div>
-        <div class="meet-line" style="background: var(--accent);"></div>
-        <div class="meet-info">
-          <div class="meet-title">Reunión de producción NTVG</div>
-          <div class="meet-sub">📍 Oficina / 60 min · Rider técnico</div>
-          <div class="meet-persons">
-            <div class="avatar" style="background:#e8403a">M</div>
-            <div class="avatar" style="background:#4a9eff">R</div>
-            <div class="avatar" style="background:#a855f7">L</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="meet-card">
-        <div class="meet-time-col">
-          <div class="meet-hour">15</div>
-          <div class="meet-ampm">PM</div>
-        </div>
-        <div class="meet-line" style="background: var(--blue);"></div>
-        <div class="meet-info">
-          <div class="meet-title">Visita técnica Centenario</div>
-          <div class="meet-sub">📍 Estadio Centenario / 90 min</div>
-          <div class="meet-persons">
-            <div class="avatar" style="background:#e8403a">M</div>
-            <div class="avatar" style="background:#2ec27e">S</div>
-          </div>
+        <div style="width:90px;">
+          <label class="edit-form-label">Duración</label>
+          <select class="edit-form-input" id="meet-dur-input">
+            <option value="30 min">30 min</option>
+            <option value="45 min">45 min</option>
+            <option value="60 min" selected>60 min</option>
+            <option value="90 min">90 min</option>
+            <option value="2 hs">2 hs</option>
+            <option value="">—</option>
+          </select>
         </div>
       </div>
 
-      <div class="section-label">Martes 9 Jun</div>
+      <div class="edit-form-group">
+        <label class="edit-form-label">Lugar</label>
+        <input class="edit-form-input" id="meet-loc-input" type="text" placeholder="Ej: Oficina, Zoom, Teatro Solís...">
+      </div>
 
-      <div class="meet-card">
-        <div class="meet-time-col">
-          <div class="meet-hour">11</div>
-          <div class="meet-ampm">AM</div>
+      <div class="edit-form-group">
+        <label class="edit-form-label">Notas</label>
+        <textarea class="edit-form-input" id="meet-notes-input" rows="3" placeholder="Agenda, temas a tratar..." style="resize:none;"></textarea>
+      </div>
+
+      <div class="edit-form-group">
+        <label class="edit-form-label">Participantes</label>
+        <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:6px;" id="meet-people-btns">
+          <button class="tl-person-btn" data-person="M" style="--pc:#e8403a;" onclick="toggleMeetPerson(this)">M</button>
+          <button class="tl-person-btn" data-person="L" style="--pc:#a855f7;" onclick="toggleMeetPerson(this)">L</button>
+          <button class="tl-person-btn" data-person="R" style="--pc:#4a9eff;" onclick="toggleMeetPerson(this)">R</button>
+          <button class="tl-person-btn" data-person="S" style="--pc:#2ec27e;" onclick="toggleMeetPerson(this)">S</button>
+          <button class="tl-person-btn" data-person="P" style="--pc:#f5c542;" onclick="toggleMeetPerson(this)">P</button>
+          <button class="tl-person-btn" data-person="F" style="--pc:#ff6b35;" onclick="toggleMeetPerson(this)">F</button>
         </div>
-        <div class="meet-line" style="background: var(--purple);"></div>
-        <div class="meet-info">
-          <div class="meet-title">Coordinación Bajofondo – Solís</div>
-          <div class="meet-sub">📍 Teatro Solís / 45 min · Riders + catering</div>
-          <div class="meet-persons">
-            <div class="avatar" style="background:#a855f7">L</div>
-            <div class="avatar" style="background:#f5c542">P</div>
-          </div>
+        <div style="font-size:11px; color:var(--text2); margin-top:8px;">M = Martín · L = Laura · R = Rodrigo · S = Santiago · P = Paula · F = Federico</div>
+      </div>
+
+      <div class="edit-form-group">
+        <label class="edit-form-label">Color</label>
+        <div style="display:flex; gap:10px; margin-top:6px;" id="meet-color-btns">
+          <div class="tl-color-swatch selected" data-color="accent"  style="background:var(--accent);"  onclick="selectMeetColor(this)"></div>
+          <div class="tl-color-swatch" data-color="blue"   style="background:var(--blue);"   onclick="selectMeetColor(this)"></div>
+          <div class="tl-color-swatch" data-color="purple" style="background:var(--purple);" onclick="selectMeetColor(this)"></div>
+          <div class="tl-color-swatch" data-color="green"  style="background:var(--green);"  onclick="selectMeetColor(this)"></div>
+          <div class="tl-color-swatch" data-color="yellow" style="background:var(--yellow);" onclick="selectMeetColor(this)"></div>
+          <div class="tl-color-swatch" data-color="orange" style="background:var(--accent2);" onclick="selectMeetColor(this)"></div>
         </div>
       </div>
 
-      <div class="meet-card">
-        <div class="meet-time-col">
-          <div class="meet-hour">17</div>
-          <div class="meet-ampm">PM</div>
-        </div>
-        <div class="meet-line" style="background: var(--green);"></div>
-        <div class="meet-info">
-          <div class="meet-title">Reunión con proveedores de luz</div>
-          <div class="meet-sub">📹 Zoom / 30 min · Cotización Drexler</div>
-          <div class="meet-persons">
-            <div class="avatar" style="background:#ff6b35">F</div>
-            <div class="avatar" style="background:#e8403a">M</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="section-label">Miércoles 10 Jun</div>
-
-      <div class="meet-card">
-        <div class="meet-time-col">
-          <div class="meet-hour">9</div>
-          <div class="meet-ampm">AM</div>
-        </div>
-        <div class="meet-line" style="background: var(--yellow);"></div>
-        <div class="meet-info">
-          <div class="meet-title">Coordinación ingreso equipos</div>
-          <div class="meet-sub">📍 Centenario – Puerta Técnica</div>
-          <div class="meet-persons">
-            <div class="avatar" style="background:#e8403a">M</div>
-            <div class="avatar" style="background:#4a9eff">R</div>
-            <div class="avatar" style="background:#a855f7">L</div>
-            <div class="avatar" style="background:#2ec27e">S</div>
-          </div>
-        </div>
-      </div>
+      <input type="hidden" id="meet-edit-id">
+      <button class="edit-save-btn" onclick="saveMeet()">Guardar reunión</button>
+      <button class="edit-cancel-btn" onclick="closeMeetPanel()">Cancelar</button>
     </div>
 
     <!-- EQUIPO SCREEN -->
@@ -2640,6 +2642,7 @@ async function saveState() {
       montajesShows: montajesData.shows,
       showMontajeMap: { ...SHOW_TO_MONTAJE },
       teamSections: teamData.sections,
+      reuniones: reunionesData,
       updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
       updatedBy: _myUid
     });
@@ -2658,7 +2661,9 @@ function applyState(data) {
     Object.assign(SHOW_TO_MONTAJE, data.showMontajeMap);
   }
   teamData.sections.splice(0, teamData.sections.length, ...(data.teamSections || []));
-  renderShows(); renderEquipo(); renderMontagePills();
+  Object.keys(reunionesData).forEach(k => delete reunionesData[k]);
+  Object.assign(reunionesData, data.reuniones || {});
+  renderShows(); renderEquipo(); renderMontagePills(); renderReuniones();
   if (_detailShowId && showsData[_detailShowId]) renderShowDetail(_detailShowId);
   const cur = montajesData.currentShow || Object.values(SHOW_TO_MONTAJE)[0] || 'ntvg';
   if (montajesData.shows[cur]) renderMontajes(cur);
@@ -2668,7 +2673,7 @@ function startSync() {
   _unsub = db.collection('state').doc('main').onSnapshot((doc) => {
     if (!doc.exists) {
       saveState().then(() => {
-        renderShows(); renderEquipo(); renderMontagePills();
+        renderShows(); renderEquipo(); renderMontagePills(); renderReuniones();
         const firstMId = Object.values(SHOW_TO_MONTAJE)[0] || 'ntvg';
         setTimeout(() => renderMontajes(firstMId), 400);
         setTimeout(() => { const s = document.getElementById('splash'); if(s) s.classList.add('hidden'); }, 1500);
@@ -2685,6 +2690,194 @@ function startSync() {
       applyState(data);
     }
   }, (err) => console.error('onSnapshot:', err));
+}
+
+// ── Reuniones data store ──────────────────────────────────
+let reunionesData = {};
+
+const MEET_COLORS = {
+  accent:  'var(--accent)',
+  blue:    'var(--blue)',
+  purple:  'var(--purple)',
+  green:   'var(--green)',
+  yellow:  'var(--yellow)',
+  orange:  'var(--accent2)',
+};
+
+function renderReuniones() {
+  const body = document.getElementById('reuniones-body');
+  const sub  = document.getElementById('reuniones-sub');
+  if (!body) return;
+
+  const all = Object.values(reunionesData).sort((a, b) => {
+    const da = (a.date || '9999') + (a.hour || '00:00');
+    const db2 = (b.date || '9999') + (b.hour || '00:00');
+    return da.localeCompare(db2);
+  });
+
+  if (sub) sub.textContent = all.length ? `${all.length} reunión${all.length > 1 ? 'es' : ''}` : 'Sin reuniones';
+
+  if (!all.length) {
+    body.innerHTML = `<div class="reuniones-empty"><div>🤝</div><div>No hay reuniones agendadas.<br>Tocá ＋ para agregar una.</div></div>`;
+    return;
+  }
+
+  // Group by date
+  const groups = {};
+  all.forEach(m => {
+    const key = m.date || '__sin_fecha__';
+    if (!groups[key]) groups[key] = [];
+    groups[key].push(m);
+  });
+
+  let html = '';
+  Object.keys(groups).sort().forEach(dateKey => {
+    const label = dateKey === '__sin_fecha__' ? 'Sin fecha' : formatMeetDateLabel(dateKey);
+    html += `<div class="section-label" style="margin-top:14px;">${label}</div>`;
+    groups[dateKey].forEach(m => { html += buildMeetCardHTML(m); });
+  });
+
+  body.innerHTML = html;
+}
+
+function formatMeetDateLabel(dateStr) {
+  const d = new Date(dateStr + 'T12:00:00');
+  const days   = ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
+  const months = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+  return `${days[d.getDay()]} ${d.getDate()} ${months[d.getMonth()]}`;
+}
+
+function buildMeetCardHTML(m) {
+  const color = MEET_COLORS[m.color] || 'var(--accent)';
+  let timeHTML = '';
+  if (m.hour) {
+    const [hh, mm] = m.hour.split(':');
+    const h = parseInt(hh);
+    const period = h < 12 ? 'AM' : 'PM';
+    const disp   = h > 12 ? h - 12 : (h === 0 ? 12 : h);
+    timeHTML = `<div class="meet-time-col"><div class="meet-hour">${disp}${mm !== '00' ? ':'+mm : ''}</div><div class="meet-ampm">${period}</div></div>`;
+  } else {
+    timeHTML = `<div class="meet-time-col" style="display:flex;align-items:center;justify-content:center;"><div style="font-size:20px;">—</div></div>`;
+  }
+
+  const parts = [];
+  if (m.location) parts.push((m.location.toLowerCase().includes('zoom') || m.location.toLowerCase().includes('meet') ? '📹 ' : '📍 ') + m.location);
+  if (m.duration) parts.push(m.duration);
+  const subLine = parts.join(' / ');
+
+  const peopleHTML = (m.people || []).map(k => {
+    const p = TEAM[k];
+    if (!p) return '';
+    return `<div class="avatar" style="background:${p.color}; color:${p.color === '#f5c542' ? '#111':'#fff'};">${k}</div>`;
+  }).join('');
+
+  const notesHTML = m.notes ? `<div class="meet-notes-text">${escHtml(m.notes)}</div>` : '';
+
+  return `<div class="meet-card" style="flex-direction:column; gap:0; padding:0; overflow:hidden;">
+    <div style="display:flex; gap:14px; align-items:flex-start; padding:14px 16px;">
+      ${timeHTML}
+      <div class="meet-line" style="background:${color};"></div>
+      <div class="meet-info">
+        <div class="meet-title">${escHtml(m.title || 'Sin título')}</div>
+        ${subLine ? `<div class="meet-sub">${subLine}</div>` : ''}
+        ${notesHTML}
+        ${peopleHTML ? `<div class="meet-persons" style="margin-top:8px;">${peopleHTML}</div>` : ''}
+        <div class="meet-card-actions">
+          <button class="meet-edit-btn" onclick="openMeetPanel('${m.id}')">✏ Editar</button>
+          <button class="meet-del-btn"  onclick="deleteMeet('${m.id}')">× Eliminar</button>
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+
+function openMeetPanel(id) {
+  const panel = document.getElementById('meet-panel');
+  const titleEl = document.getElementById('meet-panel-title');
+  document.getElementById('meet-edit-id').value = id || '';
+
+  // Reset people buttons
+  document.querySelectorAll('#meet-people-btns .tl-person-btn').forEach(b => b.classList.remove('active'));
+  // Reset color buttons
+  document.querySelectorAll('#meet-color-btns .tl-color-swatch').forEach(b => b.classList.remove('selected'));
+  document.querySelector('#meet-color-btns .tl-color-swatch[data-color="accent"]').classList.add('selected');
+
+  if (id && reunionesData[id]) {
+    const m = reunionesData[id];
+    titleEl.textContent = 'Editar reunión';
+    document.getElementById('meet-title-input').value = m.title || '';
+    document.getElementById('meet-date-input').value  = m.date  || '';
+    document.getElementById('meet-hour-input').value  = m.hour  || '';
+    document.getElementById('meet-dur-input').value   = m.duration || '60 min';
+    document.getElementById('meet-loc-input').value   = m.location || '';
+    document.getElementById('meet-notes-input').value = m.notes || '';
+    (m.people || []).forEach(k => {
+      const btn = document.querySelector(`#meet-people-btns .tl-person-btn[data-person="${k}"]`);
+      if (btn) btn.classList.add('active');
+    });
+    const colorBtn = document.querySelector(`#meet-color-btns .tl-color-swatch[data-color="${m.color || 'accent'}"]`);
+    if (colorBtn) { document.querySelectorAll('#meet-color-btns .tl-color-swatch').forEach(b=>b.classList.remove('selected')); colorBtn.classList.add('selected'); }
+  } else {
+    titleEl.textContent = 'Nueva reunión';
+    document.getElementById('meet-title-input').value = '';
+    document.getElementById('meet-date-input').value  = '';
+    document.getElementById('meet-hour-input').value  = '';
+    document.getElementById('meet-dur-input').value   = '60 min';
+    document.getElementById('meet-loc-input').value   = '';
+    document.getElementById('meet-notes-input').value = '';
+  }
+
+  panel.classList.add('open');
+  panel.scrollTop = 0;
+  setTimeout(() => document.getElementById('meet-title-input').focus(), 200);
+}
+
+function closeMeetPanel() {
+  document.getElementById('meet-panel').classList.remove('open');
+}
+
+function toggleMeetPerson(btn) {
+  btn.classList.toggle('active');
+}
+
+function selectMeetColor(swatch) {
+  document.querySelectorAll('#meet-color-btns .tl-color-swatch').forEach(b => b.classList.remove('selected'));
+  swatch.classList.add('selected');
+}
+
+function saveMeet() {
+  const id    = document.getElementById('meet-edit-id').value || ('meet-' + Date.now());
+  const title = document.getElementById('meet-title-input').value.trim();
+  if (!title) { document.getElementById('meet-title-input').focus(); return; }
+
+  const people = [...document.querySelectorAll('#meet-people-btns .tl-person-btn.active')].map(b => b.dataset.person);
+  const colorSwatch = document.querySelector('#meet-color-btns .tl-color-swatch.selected');
+  const color = colorSwatch ? colorSwatch.dataset.color : 'accent';
+
+  reunionesData[id] = {
+    id,
+    title,
+    date:     document.getElementById('meet-date-input').value,
+    hour:     document.getElementById('meet-hour-input').value,
+    duration: document.getElementById('meet-dur-input').value,
+    location: document.getElementById('meet-loc-input').value.trim(),
+    notes:    document.getElementById('meet-notes-input').value.trim(),
+    people,
+    color,
+  };
+
+  closeMeetPanel();
+  renderReuniones();
+  saveState();
+}
+
+function deleteMeet(id) {
+  const m = reunionesData[id];
+  if (!m) return;
+  if (!confirm(`¿Eliminar "${m.title}"?`)) return;
+  delete reunionesData[id];
+  renderReuniones();
+  saveState();
 }
 
 // ── Show data store ───────────────────────────────────────
