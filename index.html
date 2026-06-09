@@ -2340,6 +2340,8 @@ function makeTlItemEl(item, showId, dayId) {
   return div;
 }
 
+let _currentMontajeShowDate = null;
+
 function renderMontajes(showId, pillEl) {
   const data = montajesData.shows[showId];
   if (!data) return;
@@ -2349,6 +2351,12 @@ function renderMontajes(showId, pillEl) {
     document.querySelectorAll('#montajes-pills .pill').forEach(p => p.classList.remove('active'));
     pillEl.classList.add('active');
   }
+  // Resolve show date from SHOW_TO_MONTAJE mapping
+  const montajeToShow = Object.fromEntries(Object.entries(SHOW_TO_MONTAJE).map(([k,v])=>[v,k]));
+  const sId = montajeToShow[showId];
+  const linkedShow = sId && showsData[sId];
+  _currentMontajeShowDate = (linkedShow && linkedShow.date) ? linkedShow.date : null;
+
   const container = document.getElementById('montajes-timeline');
   container.innerHTML = '';
   data.days.forEach(day => {
@@ -2394,12 +2402,8 @@ function addTlDay(showId) {
   document.getElementById('add-day-desc').value = '';
   document.getElementById('add-day-preview').style.display = 'none';
   document.getElementById('cal-selected-label').textContent = 'Ninguna fecha seleccionada';
-  // Find show date to center calendar and mark it
-  const montajeToShow = Object.fromEntries(Object.entries(SHOW_TO_MONTAJE).map(([k,v])=>[v,k]));
-  const sId = montajeToShow[showId];
-  const show = sId && showsData[sId];
-  _calShowDate = (show && show.date) ? show.date : null;
-  // Center calendar on show month or today
+  // Use show date resolved by renderMontajes
+  _calShowDate = _currentMontajeShowDate;
   const ref = _calShowDate ? new Date(_calShowDate + 'T12:00:00') : new Date();
   _calYear = ref.getFullYear();
   _calMonth = ref.getMonth();
