@@ -344,6 +344,28 @@
   .is-lector .meet-edit-btn,
   .is-lector .meet-del-btn,
   .is-lector .is-lector-hide { display: none !important; }
+  /* Meet tasks */
+  .meet-tasks-box { border-top: 1px solid var(--border); }
+  .meet-tasks-header { display:flex; justify-content:space-between; align-items:center; padding:9px 16px; cursor:pointer; user-select:none; }
+  .meet-tasks-header-left { display:flex; align-items:center; gap:6px; font-size:12px; font-weight:700; color:var(--text2); }
+  .meet-tasks-toggle { font-size:11px; color:var(--text2); transition:transform 0.2s; }
+  .meet-tasks-toggle.open { transform:rotate(180deg); }
+  .meet-tasks-body { display:none; padding:0 16px 10px; }
+  .meet-tasks-body.open { display:block; }
+  .meet-task-row { display:flex; align-items:center; gap:8px; padding:7px 0; border-bottom:1px solid var(--border); }
+  .meet-task-row:last-child { border-bottom:none; }
+  .meet-task-check { width:18px; height:18px; border-radius:50%; border:2px solid var(--border); background:transparent; cursor:pointer; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:11px; transition:all 0.15s; }
+  .meet-task-check.done { background:var(--green); border-color:var(--green); color:#fff; }
+  .meet-task-text { flex:1; font-size:13px; color:var(--text); }
+  .meet-task-text.done { text-decoration:line-through; color:var(--text2); }
+  .meet-task-assignees { display:flex; gap:3px; }
+  .meet-task-assignee { width:22px; height:22px; border-radius:50%; font-size:10px; font-weight:700; display:flex; align-items:center; justify-content:center; }
+  .meet-task-del { background:none; border:none; color:var(--text2); font-size:13px; cursor:pointer; opacity:0; padding:0 2px; }
+  .meet-task-row:hover .meet-task-del { opacity:1; }
+  .meet-tasks-add { display:flex; align-items:center; gap:6px; padding:8px 0 2px; }
+  .meet-tasks-add-btn { font-size:12px; color:var(--blue); background:none; border:none; cursor:pointer; font-family:inherit; font-weight:600; padding:0; }
+  .is-lector .meet-task-del, .is-lector .meet-tasks-add { display:none !important; }
+  .is-lector .meet-task-check { cursor:default; }
   .reuniones-empty {
     text-align: center; padding: 60px 20px;
     color: var(--text2); font-size: 14px;
@@ -1374,6 +1396,24 @@
       <input type="hidden" id="meet-edit-id">
       <button class="edit-save-btn" onclick="saveMeet()">Guardar reunión</button>
       <button class="edit-cancel-btn" onclick="closeMeetPanel()">Cancelar</button>
+    </div>
+
+    <!-- MEET TASK PANEL -->
+    <div class="edit-panel" id="meet-task-panel">
+      <button class="back-btn" onclick="closeMeetTaskPanel()">← Cancelar</button>
+      <div style="font-size:18px; font-weight:700; margin-bottom:20px;" id="meet-task-panel-title">Nueva tarea</div>
+      <div class="edit-form-group">
+        <label class="edit-form-label">Descripción</label>
+        <input class="edit-form-input" id="mt-text" type="text" placeholder="Ej: Confirmar rider técnico...">
+      </div>
+      <div class="edit-form-group">
+        <label class="edit-form-label">Asignar a</label>
+        <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:6px;" id="mt-people-btns"></div>
+      </div>
+      <input type="hidden" id="mt-meet-id">
+      <input type="hidden" id="mt-task-id">
+      <button class="edit-save-btn" onclick="saveMeetTask()">Guardar tarea</button>
+      <button class="edit-cancel-btn" onclick="closeMeetTaskPanel()">Cancelar</button>
     </div>
 
     <!-- EQUIPO SCREEN -->
@@ -3635,6 +3675,38 @@ function buildMeetCardHTML(m) {
     ? `<div class="meet-linked-badge">🎤 ${escHtml(linkedShow.name)}</div>`
     : '';
 
+  // Tasks section
+  const tasks = m.tasks || [];
+  const doneCount = tasks.filter(t => t.done).length;
+  const tasksLabel = tasks.length ? `Tareas (${doneCount}/${tasks.length})` : 'Tareas';
+  const tasksRowsHTML = tasks.map(t => {
+    const assigneesHTML = (t.assignees || []).map(k => {
+      const mem = _teamMap[k];
+      if (!mem) return '';
+      const dark = mem.colorHex === '#f5c542' ? 'color:#111;' : '';
+      return `<div class="meet-task-assignee" style="background:${mem.colorHex};${dark}" title="${escHtml(mem.name)}">${k}</div>`;
+    }).join('');
+    return `<div class="meet-task-row">
+      <div class="meet-task-check${t.done ? ' done' : ''}" onclick="toggleMeetTask('${m.id}','${t.id}')">${t.done ? '✓' : ''}</div>
+      <div class="meet-task-text${t.done ? ' done' : ''}">${escHtml(t.text)}</div>
+      ${assigneesHTML ? `<div class="meet-task-assignees">${assigneesHTML}</div>` : ''}
+      <button class="meet-task-del" onclick="deleteMeetTask('${m.id}','${t.id}')">×</button>
+    </div>`;
+  }).join('');
+
+  const tasksHTML = `<div class="meet-tasks-box">
+    <div class="meet-tasks-header" onclick="this.nextElementSibling.classList.toggle('open'); this.querySelector('.meet-tasks-toggle').classList.toggle('open')">
+      <div class="meet-tasks-header-left">☑ ${tasksLabel}</div>
+      <span class="meet-tasks-toggle${tasks.length ? ' open' : ''}">▾</span>
+    </div>
+    <div class="meet-tasks-body${tasks.length ? ' open' : ''}">
+      ${tasksRowsHTML}
+      <div class="meet-tasks-add">
+        <button class="meet-tasks-add-btn is-lector-hide" onclick="openMeetTaskPanel('${m.id}', null)">＋ Agregar tarea</button>
+      </div>
+    </div>
+  </div>`;
+
   return `<div class="meet-card" style="flex-direction:column; gap:0; padding:0; overflow:hidden;">
     <div style="display:flex; gap:14px; align-items:flex-start; padding:14px 16px;">
       ${timeHTML}
@@ -3651,6 +3723,7 @@ function buildMeetCardHTML(m) {
         </div>
       </div>
     </div>
+    ${tasksHTML}
   </div>`;
 }
 
@@ -3733,6 +3806,86 @@ function closeMeetPanel() {
   document.getElementById('meet-panel').classList.remove('open');
 }
 
+function openMeetTaskPanel(meetId, taskId) {
+  const panel = document.getElementById('meet-task-panel');
+  document.getElementById('mt-meet-id').value = meetId;
+  document.getElementById('mt-task-id').value = taskId || '';
+  document.getElementById('meet-task-panel-title').textContent = taskId ? 'Editar tarea' : 'Nueva tarea';
+
+  // Populate people buttons from team
+  const container = document.getElementById('mt-people-btns');
+  let html = '';
+  teamData.sections.forEach(sec => {
+    sec.members.forEach(m => {
+      html += `<button class="tl-person-btn" data-person="${m.letter}" style="--pc:${m.colorHex};" onclick="toggleMeetPerson(this)" title="${escHtml(m.name)}">${m.letter}</button>`;
+    });
+  });
+  container.innerHTML = html;
+
+  if (taskId) {
+    const meet = reunionesData[meetId];
+    const task = meet && (meet.tasks || []).find(t => t.id === taskId);
+    if (task) {
+      document.getElementById('mt-text').value = task.text || '';
+      (task.assignees || []).forEach(k => {
+        const btn = container.querySelector(`[data-person="${k}"]`);
+        if (btn) btn.classList.add('active');
+      });
+    }
+  } else {
+    document.getElementById('mt-text').value = '';
+  }
+
+  panel.classList.add('open');
+  panel.scrollTop = 0;
+  setTimeout(() => document.getElementById('mt-text').focus(), 200);
+}
+
+function closeMeetTaskPanel() {
+  document.getElementById('meet-task-panel').classList.remove('open');
+}
+
+function saveMeetTask() {
+  const meetId = document.getElementById('mt-meet-id').value;
+  const taskId = document.getElementById('mt-task-id').value;
+  const text   = document.getElementById('mt-text').value.trim();
+  if (!text) { document.getElementById('mt-text').focus(); return; }
+  const assignees = [...document.querySelectorAll('#mt-people-btns .tl-person-btn.active')].map(b => b.dataset.person);
+
+  const meet = reunionesData[meetId];
+  if (!meet) return;
+  if (!meet.tasks) meet.tasks = [];
+
+  if (taskId) {
+    const t = meet.tasks.find(t => t.id === taskId);
+    if (t) { t.text = text; t.assignees = assignees; }
+  } else {
+    meet.tasks.push({ id: 'mt-' + Date.now(), text, assignees, done: false });
+  }
+
+  closeMeetTaskPanel();
+  renderReuniones();
+  saveState();
+}
+
+function toggleMeetTask(meetId, taskId) {
+  const meet = reunionesData[meetId];
+  if (!meet) return;
+  const task = (meet.tasks || []).find(t => t.id === taskId);
+  if (!task) return;
+  task.done = !task.done;
+  renderReuniones();
+  saveState();
+}
+
+function deleteMeetTask(meetId, taskId) {
+  const meet = reunionesData[meetId];
+  if (!meet) return;
+  meet.tasks = (meet.tasks || []).filter(t => t.id !== taskId);
+  renderReuniones();
+  saveState();
+}
+
 function toggleMeetPerson(btn) {
   btn.classList.toggle('active');
 }
@@ -3765,6 +3918,7 @@ function saveMeet() {
   const colorSwatch = document.querySelector('#meet-color-btns .tl-color-swatch.selected');
   const color = colorSwatch ? colorSwatch.dataset.color : 'accent';
 
+  const existingTasks = (reunionesData[id] && reunionesData[id].tasks) || [];
   reunionesData[id] = {
     id,
     title,
@@ -3776,6 +3930,7 @@ function saveMeet() {
     notes:    document.getElementById('meet-notes-input').value.trim(),
     people,
     color,
+    tasks: existingTasks,
   };
 
   closeMeetPanel();
