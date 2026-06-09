@@ -1356,15 +1356,7 @@
 
       <div class="edit-form-group">
         <label class="edit-form-label">Participantes</label>
-        <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:6px;" id="meet-people-btns">
-          <button class="tl-person-btn" data-person="M" style="--pc:#e8403a;" onclick="toggleMeetPerson(this)">M</button>
-          <button class="tl-person-btn" data-person="L" style="--pc:#a855f7;" onclick="toggleMeetPerson(this)">L</button>
-          <button class="tl-person-btn" data-person="R" style="--pc:#4a9eff;" onclick="toggleMeetPerson(this)">R</button>
-          <button class="tl-person-btn" data-person="S" style="--pc:#2ec27e;" onclick="toggleMeetPerson(this)">S</button>
-          <button class="tl-person-btn" data-person="P" style="--pc:#f5c542;" onclick="toggleMeetPerson(this)">P</button>
-          <button class="tl-person-btn" data-person="F" style="--pc:#ff6b35;" onclick="toggleMeetPerson(this)">F</button>
-        </div>
-        <div style="font-size:11px; color:var(--text2); margin-top:8px;">M = Martín · L = Laura · R = Rodrigo · S = Santiago · P = Paula · F = Federico</div>
+        <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:6px;" id="meet-people-btns"></div>
       </div>
 
       <div class="edit-form-group">
@@ -3627,10 +3619,13 @@ function buildMeetCardHTML(m) {
   if (m.duration) parts.push(m.duration);
   const subLine = parts.join(' / ');
 
+  const _teamMap = {};
+  teamData.sections.forEach(sec => sec.members.forEach(mem => { _teamMap[mem.letter] = mem; }));
   const peopleHTML = (m.people || []).map(k => {
-    const p = TEAM[k];
-    if (!p) return '';
-    return `<div class="avatar" style="background:${p.color}; color:${p.color === '#f5c542' ? '#111':'#fff'};">${k}</div>`;
+    const mem = _teamMap[k];
+    if (!mem) return '';
+    const dark = mem.colorHex === '#f5c542' ? 'color:#111;' : '';
+    return `<div class="avatar" style="background:${mem.colorHex};${dark}" title="${escHtml(mem.name)}">${k}</div>`;
   }).join('');
 
   const notesHTML = m.notes ? `<div class="meet-notes-text">${escHtml(m.notes)}</div>` : '';
@@ -3696,8 +3691,6 @@ function openMeetPanel(id) {
   const titleEl = document.getElementById('meet-panel-title');
   document.getElementById('meet-edit-id').value = id || '';
 
-  // Reset people buttons
-  document.querySelectorAll('#meet-people-btns .tl-person-btn').forEach(b => b.classList.remove('active'));
   // Reset color buttons
   document.querySelectorAll('#meet-color-btns .tl-color-swatch').forEach(b => b.classList.remove('selected'));
   document.querySelector('#meet-color-btns .tl-color-swatch[data-color="accent"]').classList.add('selected');
@@ -3705,6 +3698,7 @@ function openMeetPanel(id) {
   if (id && reunionesData[id]) {
     const m = reunionesData[id];
     titleEl.textContent = 'Editar reunión';
+    renderMeetPeopleBtns(m.people || []);
     document.getElementById('meet-title-input').value = m.title || '';
     document.getElementById('meet-title-input').dataset.autoFilled = 'false';
     document.getElementById('meet-linked-show').value = m.linkedShowId || '';
@@ -3713,15 +3707,12 @@ function openMeetPanel(id) {
     document.getElementById('meet-dur-input').value   = m.duration || '60 min';
     document.getElementById('meet-loc-input').value   = m.location || '';
     document.getElementById('meet-notes-input').value = m.notes || '';
-    (m.people || []).forEach(k => {
-      const btn = document.querySelector(`#meet-people-btns .tl-person-btn[data-person="${k}"]`);
-      if (btn) btn.classList.add('active');
-    });
     const colorBtn = document.querySelector(`#meet-color-btns .tl-color-swatch[data-color="${m.color || 'accent'}"]`);
     if (colorBtn) { document.querySelectorAll('#meet-color-btns .tl-color-swatch').forEach(b=>b.classList.remove('selected')); colorBtn.classList.add('selected'); }
     buildMeetShowChips(m.linkedShowId || null);
   } else {
     titleEl.textContent = 'Nueva reunión';
+    renderMeetPeopleBtns([]);
     document.getElementById('meet-title-input').value = '';
     document.getElementById('meet-title-input').dataset.autoFilled = 'false';
     document.getElementById('meet-linked-show').value = '';
@@ -3744,6 +3735,20 @@ function closeMeetPanel() {
 
 function toggleMeetPerson(btn) {
   btn.classList.toggle('active');
+}
+
+function renderMeetPeopleBtns(activeKeys) {
+  const container = document.getElementById('meet-people-btns');
+  if (!container) return;
+  const keys = activeKeys || [];
+  let html = '';
+  teamData.sections.forEach(sec => {
+    sec.members.forEach(m => {
+      const active = keys.includes(m.letter) ? ' active' : '';
+      html += `<button class="tl-person-btn${active}" data-person="${m.letter}" style="--pc:${m.colorHex};" onclick="toggleMeetPerson(this)" title="${escHtml(m.name)}">${m.letter}</button>`;
+    });
+  });
+  container.innerHTML = html;
 }
 
 function selectMeetColor(swatch) {
