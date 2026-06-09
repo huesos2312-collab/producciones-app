@@ -1124,6 +1124,26 @@
   .role-director { color:var(--purple); }
   .role-editor { color:var(--green); }
   .role-lector { color:var(--yellow); }
+
+  /* ── Custom calendar picker ─────────────────────────── */
+  .cal-picker { background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius-sm); overflow: hidden; margin-bottom: 12px; }
+  .cal-header { display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; }
+  .cal-month-label { font-size: 14px; font-weight: 700; color: var(--text); }
+  .cal-nav { background: none; border: none; color: var(--text2); font-size: 18px; cursor: pointer; padding: 2px 8px; border-radius: 6px; }
+  .cal-nav:hover { background: var(--surface); }
+  .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); }
+  .cal-dow { text-align: center; font-size: 10px; font-weight: 700; color: var(--text2); padding: 4px 0 6px; text-transform: uppercase; letter-spacing: 0.4px; }
+  .cal-day { text-align: center; padding: 6px 2px; font-size: 13px; cursor: pointer; border-radius: 6px; margin: 1px; color: var(--text); transition: background 0.12s; }
+  .cal-day:hover:not(.cal-empty):not(.cal-show-date) { background: var(--surface); }
+  .cal-day.cal-empty { cursor: default; }
+  .cal-day.cal-show-date { background: #e03e3e22; color: #e03e3e; font-weight: 800; border: 1.5px solid #e03e3e; }
+  .cal-day.cal-selected { background: var(--accent); color: #fff; font-weight: 700; }
+  .cal-day.cal-selected.cal-show-date { background: #e03e3e; color: #fff; }
+  .cal-day.cal-today { font-weight: 700; text-decoration: underline; }
+  .cal-legend { display: flex; gap: 12px; align-items: center; padding: 8px 14px; border-top: 1px solid var(--border); font-size: 11px; color: var(--text2); }
+  .cal-legend-dot { width: 10px; height: 10px; border-radius: 3px; flex-shrink: 0; }
+  .cal-selected-label { font-size: 12px; color: var(--text2); margin-bottom: 12px; min-height: 18px; }
+
 </style>
 </head>
 <body>
@@ -1700,7 +1720,19 @@
 
       <div class="edit-form-group">
         <label class="edit-form-label">Fecha</label>
-        <input class="edit-form-input" id="add-day-date" type="date" oninput="updateDayPreview()">
+        <input type="hidden" id="add-day-date">
+        <div class="cal-selected-label" id="cal-selected-label">Ninguna fecha seleccionada</div>
+        <div class="cal-picker" id="day-cal-picker">
+          <div class="cal-header">
+            <button class="cal-nav" onclick="calNav(-1)">‹</button>
+            <span class="cal-month-label" id="cal-month-label"></span>
+            <button class="cal-nav" onclick="calNav(1)">›</button>
+          </div>
+          <div class="cal-grid" id="cal-grid"></div>
+          <div class="cal-legend">
+            <div class="cal-legend-dot" style="background:#e03e3e;"></div><span>Fecha del show</span>
+          </div>
+        </div>
       </div>
 
       <div class="edit-form-group">
@@ -2338,7 +2370,7 @@ function renderMontajes(showId, pillEl) {
     const addBtn = document.createElement('button');
     addBtn.className = 'add-task-btn';
     addBtn.style.cssText = 'width:100%; margin-top:4px; border-radius:var(--radius); border-top:none;';
-    addBtn.textContent = '＋ Agregar evento';
+    addBtn.textContent = '＋ Agregar jornada';
     addBtn.onclick = () => openTlEdit(showId, day.id, null);
     dayEl.appendChild(addBtn);
     // Tasks section
@@ -2361,6 +2393,17 @@ function addTlDay(showId) {
   document.getElementById('add-day-date').value = '';
   document.getElementById('add-day-desc').value = '';
   document.getElementById('add-day-preview').style.display = 'none';
+  document.getElementById('cal-selected-label').textContent = 'Ninguna fecha seleccionada';
+  // Find show date to center calendar and mark it
+  const montajeToShow = Object.fromEntries(Object.entries(SHOW_TO_MONTAJE).map(([k,v])=>[v,k]));
+  const sId = montajeToShow[showId];
+  const show = sId && showsData[sId];
+  _calShowDate = (show && show.date) ? show.date : null;
+  // Center calendar on show month or today
+  const ref = _calShowDate ? new Date(_calShowDate + 'T12:00:00') : new Date();
+  _calYear = ref.getFullYear();
+  _calMonth = ref.getMonth();
+  renderCal();
   const panel = document.getElementById('add-day-panel');
   panel.classList.add('open');
   panel.scrollTop = 0;
@@ -2391,6 +2434,56 @@ function formatDayLabel(dateVal, desc) {
   }
   if (desc) label += (label ? ' – ' : '') + desc;
   return label || 'Sin nombre';
+}
+
+
+let _calYear = new Date().getFullYear();
+let _calMonth = new Date().getMonth();
+let _calShowDate = null;
+
+function calNav(dir) {
+  _calMonth += dir;
+  if (_calMonth > 11) { _calMonth = 0; _calYear++; }
+  if (_calMonth < 0)  { _calMonth = 11; _calYear--; }
+  renderCal();
+}
+
+function renderCal() {
+  const MONTHS = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+  const DAYS   = ['Do','Lu','Ma','Mi','Ju','Vi','Sa'];
+  document.getElementById('cal-month-label').textContent = MONTHS[_calMonth] + ' ' + _calYear;
+  const grid = document.getElementById('cal-grid');
+  const today = new Date(); today.setHours(0,0,0,0);
+  const todayStr = today.toISOString().slice(0,10);
+  const selVal = document.getElementById('add-day-date').value;
+  let html = '';
+  DAYS.forEach(d => { html += `<div class="cal-dow">${d}</div>`; });
+  const first = new Date(_calYear, _calMonth, 1).getDay(); // 0=Sun
+  for (let i = 0; i < first; i++) html += '<div class="cal-empty"></div>';
+  const daysInMonth = new Date(_calYear, _calMonth + 1, 0).getDate();
+  for (let d = 1; d <= daysInMonth; d++) {
+    const iso = _calYear + '-' + String(_calMonth+1).padStart(2,'0') + '-' + String(d).padStart(2,'0');
+    let cls = 'cal-day';
+    if (iso === _calShowDate) cls += ' cal-show-date';
+    if (iso === selVal) cls += ' cal-selected';
+    if (iso === todayStr) cls += ' cal-today';
+    html += `<div class="${cls}" onclick="selectCalDay('${iso}')">${d}</div>`;
+  }
+  grid.innerHTML = html;
+}
+
+function selectCalDay(iso) {
+  document.getElementById('add-day-date').value = iso;
+  const d = new Date(iso + 'T12:00:00');
+  const days   = ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
+  const months = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+  const label  = days[d.getDay()] + ' ' + d.getDate() + ' ' + months[d.getMonth()] + ' ' + d.getFullYear();
+  document.getElementById('cal-selected-label').textContent = '📅 ' + label;
+  if (_calShowDate && iso === _calShowDate) {
+    document.getElementById('cal-selected-label').textContent += ' 🔴 (Día del show)';
+  }
+  renderCal();
+  updateDayPreview();
 }
 
 function saveNewDay() {
