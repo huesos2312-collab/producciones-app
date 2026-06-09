@@ -1144,6 +1144,54 @@
   .cal-legend-dot { width: 10px; height: 10px; border-radius: 3px; flex-shrink: 0; }
   .cal-selected-label { font-size: 12px; color: var(--text2); margin-bottom: 12px; min-height: 18px; }
 
+
+  /* ── Day-level labor call ───────────────────────────── */
+  .day-lc-box {
+    background: var(--surface2); border: 1px solid var(--border);
+    border-radius: var(--radius-sm); margin-top: 8px; overflow: hidden;
+  }
+  .day-lc-header {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 9px 12px; cursor: pointer; user-select: none;
+  }
+  .day-lc-header-left { display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700; color: var(--text); }
+  .day-lc-toggle { font-size: 11px; color: var(--text2); transition: transform 0.2s; }
+  .day-lc-toggle.open { transform: rotate(180deg); }
+  .day-lc-body { display: none; border-top: 1px solid var(--border); }
+  .day-lc-body.open { display: block; }
+  .day-lc-row {
+    display: flex; align-items: center; gap: 8px;
+    padding: 7px 12px; border-bottom: 1px solid var(--border); font-size: 13px;
+  }
+  .day-lc-row:last-of-type { border-bottom: none; }
+  .day-lc-qty { font-size: 16px; font-weight: 800; color: var(--text); min-width: 24px; text-align: center; }
+  .day-lc-pax { font-size: 10px; color: var(--text2); }
+  .day-lc-time { font-size: 12px; color: var(--blue); font-weight: 600; min-width: 52px; }
+  .day-lc-role { flex: 1; color: var(--text2); font-size: 13px; }
+  .day-lc-del { background:none; border:none; color:var(--text2); font-size:14px; cursor:pointer; opacity:0; padding:0 4px; }
+  .day-lc-row:hover .day-lc-del { opacity: 1; }
+  .day-lc-del:hover { color: var(--accent); }
+  .day-lc-add-row {
+    display: flex; gap: 6px; align-items: center;
+    padding: 8px 12px; background: var(--surface);
+  }
+  .day-lc-input {
+    background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 6px; padding: 5px 8px; font-size: 12px;
+    color: var(--text); font-family: inherit; outline: none;
+  }
+  .day-lc-input:focus { border-color: var(--blue); }
+  .day-lc-input.qty  { width: 52px; text-align: center; }
+  .day-lc-input.time { width: 80px; }
+  .day-lc-input.role { flex: 1; min-width: 80px; }
+  .day-lc-ok {
+    background: var(--blue); border: none; border-radius: 6px;
+    color: #fff; font-weight: 700; font-size: 13px;
+    padding: 5px 10px; cursor: pointer; font-family: inherit;
+  }
+  .is-lector .day-lc-del,
+  .is-lector .day-lc-add-row { display: none !important; }
+
 </style>
 </head>
 <body>
@@ -2383,6 +2431,8 @@ function renderMontajes(showId, pillEl) {
     addBtn.textContent = '＋ Agregar ítem';
     addBtn.onclick = () => openTlEdit(showId, day.id, null);
     dayEl.appendChild(addBtn);
+    // Labor call section (day level)
+    dayEl.appendChild(makeDayLaborCallEl(showId, day));
     // Tasks section
     dayEl.appendChild(makeDayTasksEl(showId, day));
     container.appendChild(dayEl);
@@ -4002,6 +4052,84 @@ function renderMontagePills() {
 }
 
 // ── Day tasks ────────────────────────────────────────────
+
+function makeDayLaborCallEl(showId, day) {
+  const lcs = day.laborCalls || [];
+  const box = document.createElement('div');
+  box.className = 'day-lc-box';
+  box.dataset.showId = showId;
+  box.dataset.dayId = day.id;
+
+  const countBadge = lcs.length ? ` <span style="color:var(--blue);font-weight:800;">(${lcs.length})</span>` : '';
+  const hdr = document.createElement('div');
+  hdr.className = 'day-lc-header';
+  hdr.innerHTML = `
+    <div class="day-lc-header-left">👷 Labor Call${countBadge}</div>
+    <span class="day-lc-toggle">▾</span>`;
+  hdr.onclick = () => {
+    const body = box.querySelector('.day-lc-body');
+    const tog  = box.querySelector('.day-lc-toggle');
+    body.classList.toggle('open');
+    tog.classList.toggle('open');
+  };
+  box.appendChild(hdr);
+
+  const body = document.createElement('div');
+  body.className = 'day-lc-body open';
+
+  lcs.forEach(lc => {
+    const row = document.createElement('div');
+    row.className = 'day-lc-row';
+    row.dataset.lcId = lc.id;
+    row.innerHTML = `
+      <div style="text-align:center;">
+        <div class="day-lc-qty">${lc.qty}</div>
+        <div class="day-lc-pax">pax</div>
+      </div>
+      <div class="day-lc-time">${lc.time || '—'}</div>
+      <div class="day-lc-role">${escHtml(lc.role || '')}</div>
+      <button class="day-lc-del" onclick="deleteDayLaborCall('${showId}','${day.id}','${lc.id}')">×</button>`;
+    body.appendChild(row);
+  });
+
+  // Add row
+  const addRow = document.createElement('div');
+  addRow.className = 'day-lc-add-row';
+  addRow.innerHTML = `
+    <input class="day-lc-input qty"  type="number" min="1" placeholder="Cant." title="Cantidad de personas">
+    <input class="day-lc-input time" type="time" title="Hora de llamado">
+    <input class="day-lc-input role" type="text" placeholder="Rol / función (ej: Riggers, FOH, Seguridad...)">
+    <button class="day-lc-ok" onclick="addDayLaborCall('${showId}','${day.id}',this)">＋</button>`;
+  body.appendChild(addRow);
+  box.appendChild(body);
+  return box;
+}
+
+function addDayLaborCall(showId, dayId, btn) {
+  const row  = btn.closest('.day-lc-add-row');
+  const qty  = row.querySelector('.qty').value.trim();
+  const time = row.querySelector('.time').value;
+  const role = row.querySelector('.role').value.trim();
+  if (!qty && !role) return;
+  const day = montajesData.shows[showId].days.find(d => d.id === dayId);
+  if (!day) return;
+  if (!day.laborCalls) day.laborCalls = [];
+  day.laborCalls.push({ id: 'lc-' + Date.now(), qty: qty || '?', time, role });
+  row.querySelector('.qty').value = '';
+  row.querySelector('.time').value = '';
+  row.querySelector('.role').value = '';
+  renderMontajes(showId);
+  saveState('Labor call agregado');
+}
+
+function deleteDayLaborCall(showId, dayId, lcId) {
+  const day = montajesData.shows[showId].days.find(d => d.id === dayId);
+  if (!day) return;
+  day.laborCalls = (day.laborCalls || []).filter(lc => lc.id !== lcId);
+  renderMontajes(showId);
+  saveState('Labor call eliminado');
+}
+
 function makeDayTasksEl(showId, day) {
   const tasks = day.tasks || [];
   const box = document.createElement('div');
