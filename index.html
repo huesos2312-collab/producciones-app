@@ -2584,7 +2584,9 @@ function openTlEdit(showId, dayId, itemId) {
     document.querySelectorAll('.tl-color-swatch').forEach(s => s.classList.toggle('selected', s.dataset.color === item.color));
     document.querySelectorAll('.tl-person-btn').forEach(b => { if (item.people.includes(b.dataset.person)) b.classList.add('active'); });
   } else {
-    document.getElementById('tl-edit-date').value = '';
+    // Pre-fill date from the jornada's date
+    const _day = montajesData.shows[showId].days.find(d => d.id === dayId);
+    document.getElementById('tl-edit-date').value = (_day && _day.date) ? _day.date : '';
     document.getElementById('tl-edit-time').value = '';
     document.getElementById('tl-edit-period').value = 'AM';
     document.getElementById('tl-edit-name').value = '';
