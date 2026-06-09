@@ -2352,10 +2352,12 @@ function renderMontajes(showId, pillEl) {
     pillEl.classList.add('active');
   }
   // Resolve show date from SHOW_TO_MONTAJE mapping
-  const montajeToShow = Object.fromEntries(Object.entries(SHOW_TO_MONTAJE).map(([k,v])=>[v,k]));
-  const sId = montajeToShow[showId];
-  const linkedShow = sId && showsData[sId];
-  _currentMontajeShowDate = (linkedShow && linkedShow.date) ? linkedShow.date : null;
+  try {
+    const montajeToShow = Object.fromEntries(Object.entries(SHOW_TO_MONTAJE).map(([k,v])=>[v,k]));
+    const sId = montajeToShow[showId];
+    const linkedShow = sId && showsData[sId];
+    _currentMontajeShowDate = (linkedShow && linkedShow.date) ? linkedShow.date : null;
+  } catch(e) { _currentMontajeShowDate = null; }
 
   const container = document.getElementById('montajes-timeline');
   container.innerHTML = '';
@@ -2378,7 +2380,7 @@ function renderMontajes(showId, pillEl) {
     const addBtn = document.createElement('button');
     addBtn.className = 'add-task-btn';
     addBtn.style.cssText = 'width:100%; margin-top:4px; border-radius:var(--radius); border-top:none;';
-    addBtn.textContent = '＋ Agregar jornada';
+    addBtn.textContent = '＋ Agregar ítem';
     addBtn.onclick = () => openTlEdit(showId, day.id, null);
     dayEl.appendChild(addBtn);
     // Tasks section
