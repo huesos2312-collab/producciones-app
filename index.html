@@ -3052,11 +3052,14 @@ function renderShows() {
   const body = document.getElementById('shows-body');
   if (!body) return;
   const all = Object.values(showsData);
-  const sf  = all.filter(s => !s.date);
+  const isLector = currentRole === 'lector';
+  // Lectores solo ven shows confirmados (con fecha); editores y directores ven todo
+  const sf  = isLector ? [] : all.filter(s => !s.date);
   const con = all.filter(s => !!s.date).sort((a,b) => (a.date||'').localeCompare(b.date||''));
   let html = '';
   if (sf.length)  { html += `<div class="section-label" style="margin-top:12px;">Shows sin fecha</div>`; sf.forEach(s => { html += buildSinfechaCardHTML(s); }); }
   if (con.length) { html += `<div class="section-label" style="margin-top:20px;">Shows confirmados</div>`; con.forEach(s => { html += buildConfirmadoCardHTML(s); }); }
+  if (!sf.length && !con.length) { html = '<div style="font-size:13px;color:var(--text2);padding:12px 0;">No hay shows confirmados aún.</div>'; }
   body.innerHTML = html;
 }
 
